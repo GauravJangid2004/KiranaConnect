@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AuthProvider } from './contexts/AuthContext.jsx';
-import useAuth from './contexts/AuthContext.jsx';
+import { AuthProvider, useAuth } from './contexts/AuthContext.jsx';
 import AuthPage from './components/AuthPage.jsx';
 import Topbar from './components/Topbar.jsx';
 
@@ -10,8 +9,8 @@ const WHOLESALER_TABS = ['wh-orders', 'wh-batches', 'wh-products'];
 function DashboardPanel({ title, body, tone = 'saffron' }) {
   const toneMap = {
     saffron: { border: 'rgba(255,107,53,.22)', glow: 'rgba(255,107,53,.12)', badge: 'badge-primary' },
-    ice: { border: 'rgba(0,229,255,.2)', glow: 'rgba(0,229,255,.08)', badge: 'badge-info' },
-    emerald: { border: 'rgba(0,230,118,.2)', glow: 'rgba(0,230,118,.08)', badge: 'badge-success' },
+    ice:     { border: 'rgba(0,229,255,.2)',   glow: 'rgba(0,229,255,.08)',  badge: 'badge-info' },
+    emerald: { border: 'rgba(0,230,118,.2)',   glow: 'rgba(0,230,118,.08)', badge: 'badge-success' },
   };
 
   const meta = toneMap[tone];
