@@ -1,6 +1,10 @@
 import jwt from 'jsonwebtoken';
 
 export function authenticate(req, res, next) {
+  if (!process.env.JWT_SECRET) {
+    return res.status(500).json({ error: 'JWT_SECRET is not configured' });
+  }
+
   const authHeader = req.headers.authorization || '';
   const [scheme, token] = authHeader.split(' ');
 

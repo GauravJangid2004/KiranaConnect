@@ -10,6 +10,14 @@ const normalizePhone = (phone = '') => String(phone).replace(/\D/g, '');
 const normalizeText = (value = '') => String(value).trim();
 const normalizeGst = (value = '') => String(value).trim().toUpperCase();
 
+function getJwtSecret() {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET is not configured');
+  }
+
+  return process.env.JWT_SECRET;
+}
+
 function safeUser(user) {
   return {
     id: user._id,
@@ -26,7 +34,7 @@ function safeUser(user) {
 function signToken(user) {
   return jwt.sign(
     { userId: user._id, role: user.role, shopName: user.shopName },
-    process.env.JWT_SECRET,
+    getJwtSecret(),
     { expiresIn: '7d' }
   );
 }
@@ -76,6 +84,10 @@ router.post('/register', async (req, res) => {
     const user = await User.create(payload);
     res.status(201).json({ token: signToken(user), user: safeUser(user) });
   } catch (error) {
+    if (error.message === 'JWT_SECRET is not configured') {
+      return res.status(500).json({ error: error.message });
+    }
+
     res.status(400).json({ error: error.message });
   }
 });
@@ -100,6 +112,10 @@ router.post('/login', async (req, res) => {
 
     res.json({ token: signToken(user), user: safeUser(user) });
   } catch (error) {
+    if (error.message === 'JWT_SECRET is not configured') {
+      return res.status(500).json({ error: error.message });
+    }
+
     res.status(500).json({ error: error.message });
   }
 });
