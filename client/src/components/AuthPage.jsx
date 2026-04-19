@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 const INDIA_DATA = {
-  "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Tirupati", "Kurnool", "Nellore", "Kakinada", "Rajahmundry", "Kadapa", "Anantapur"],
+  'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur', 'Tirupati', 'Kurnool', 'Nellore', 'Kakinada', 'Rajahmundry', 'Kadapa', 'Anantapur'],
   "Arunachal Pradesh": ["Itanagar", "Naharlagun", "Pasighat", "Tawang", "Ziro", "Bomdila"],
   "Assam": ["Guwahati", "Dibrugarh", "Silchar", "Jorhat", "Nagaon", "Tezpur", "Tinsukia", "Bongaigaon"],
   "Bihar": ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur", "Darbhanga", "Purnia", "Ara", "Begusarai", "Katihar", "Munger"],
@@ -38,30 +38,30 @@ const INDIA_DATA = {
   "Andaman & Nicobar": ["Port Blair", "Diglipur", "Car Nicobar"],
   "Lakshadweep": ["Kavaratti", "Agatti", "Minicoy"],
   "Dadra & Nagar Haveli": ["Silvassa", "Amli", "Khanvel"],
-  "Daman & Diu": ["Daman", "Diu"],
+  'Daman & Diu': ['Daman', 'Diu'],
 };
 
 const STATES = Object.keys(INDIA_DATA).sort();
 
 const FEATURES = [
-  { icon: "⚡", label: "Live Wholesale Prices", sub: "Tiered slab — best rate auto-applied" },
-  { icon: "🔄", label: "6-Hour Dispatch Batches", sub: "Orders aggregated, never missed" },
-  { icon: "⚛️", label: "Redis-Cached Catalogue", sub: "24h TTL · sub-ms reads" },
-  { icon: "🔒", label: "Atomic Stock Control", sub: "Zero overselling, guaranteed" },
+  { icon: 'PR', label: 'Live Wholesale Prices', sub: 'Tiered slab - best rate auto-applied' },
+  { icon: 'BT', label: '6-Hour Dispatch Batches', sub: 'Orders aggregated, never missed' },
+  { icon: 'RC', label: 'Redis-Cached Catalogue', sub: '24h TTL - sub-ms reads' },
+  { icon: 'SC', label: 'Atomic Stock Control', sub: 'Zero overselling, guaranteed' },
 ];
 
 export default function AuthPage() {
-  const { login, register } = useAuth();
-  const [mode, setMode]           = useState("login");
-  const [role, setRole]           = useState("shopOwner");
+  const { login, register, authError, setAuthError } = useAuth();
+  const [mode, setMode]           = useState('login');
+  const [role, setRole]           = useState('shopOwner');
   const [loading, setLoading]     = useState(false);
-  const [error, setError]         = useState("");
+  const [error, setError]         = useState('');
   const [mounted, setMounted]     = useState(false);
-  const [selectedState, setSelectedState] = useState("");
+  const [selectedState, setSelectedState] = useState('');
   const [districts, setDistricts]         = useState([]);
   const [form, setForm] = useState({
-    phone: "", password: "", name: "", shopName: "",
-    state: "", district: "", gstNumber: "",
+    phone: '', password: '', name: '', shopName: '',
+    state: '', district: '', gstNumber: '',
   });
 
   useEffect(() => { setTimeout(() => setMounted(true), 60); }, []);
@@ -70,21 +70,23 @@ export default function AuthPage() {
     if (selectedState) {
       const d = INDIA_DATA[selectedState] || [];
       setDistricts(d);
-      setForm(f => ({ ...f, state: selectedState, district: d[0] || "" }));
+      setForm(f => ({ ...f, state: selectedState, district: d[0] || '' }));
     } else {
       setDistricts([]);
-      setForm(f => ({ ...f, state: "", district: "" }));
+      setForm(f => ({ ...f, state: '', district: '' }));
     }
   }, [selectedState]);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const submit = async () => {
-    setError(""); setLoading(true);
+    setError('');
+    setAuthError('');
+    setLoading(true);
     try {
-      if (mode === "login") await login(form.phone, form.password);
+      if (mode === 'login') await login(form.phone, form.password);
       else await register({ ...form, role });
-    } catch (e) { setError(e.error || "Something went wrong"); }
+    } catch (e) { setError(e.error || 'Something went wrong'); }
     finally { setLoading(false); }
   };
 
@@ -224,9 +226,9 @@ export default function AuthPage() {
           {/* LEFT */}
           <div className="ap-left">
             <div className="ap-glow1" /><div className="ap-glow2" />
-            <div className="ap-logo">🏪</div>
+            <div className="ap-logo">KC</div>
             <div className="ap-brand">Kirana<br />Connect</div>
-            <div className="ap-tag"><span className="ap-dot" /> B2B Wholesale · Pan India</div>
+            <div className="ap-tag"><span className="ap-dot" /> B2B Wholesale - Pan India</div>
             <div className="ap-sep" />
             <div className="ap-feats">
               {FEATURES.map(({ icon, label, sub }, i) => (
@@ -241,9 +243,9 @@ export default function AuthPage() {
               ))}
             </div>
             <div className="ap-demo">
-              <div>📱 ShopOwner Demo</div>
+              <div>ShopOwner Demo</div>
               <div><b>9876543211</b> / password123</div>
-              <div style={{ marginTop: 6 }}>🏭 Wholesaler Demo</div>
+              <div style={{ marginTop: 6 }}>Wholesaler Demo</div>
               <div><b>9876543210</b> / password123</div>
             </div>
           </div>
@@ -251,29 +253,29 @@ export default function AuthPage() {
           {/* RIGHT */}
           <div className="ap-right">
             <div className="ap-heading">
-              {mode === "login" ? "Welcome back 👋" : "Join the Mandi 🏪"}
+              {mode === 'login' ? 'Welcome back' : 'Join the Mandi'}
             </div>
             <div className="ap-subhead">
-              {mode === "login"
-                ? "Sign in to your KiranaConnect account"
-                : "Create your account — available across all of India"}
+              {mode === 'login'
+                ? 'Sign in to your KiranaConnect account'
+                : 'Create your account - available across all of India'}
             </div>
 
             <div className="ap-tabs">
-              {[["login","🔑","Sign In"],["register","📝","Register"]].map(([m,ico,lbl]) => (
-                <button key={m} className={`ap-tab ${mode===m?"on":"off"}`}
-                        onClick={() => { setMode(m); setError(""); }}>
+              {[['login', 'IN', 'Sign In'], ['register', 'UP', 'Register']].map(([m, ico, lbl]) => (
+                <button key={m} className={`ap-tab ${mode===m?'on':'off'}`}
+                        onClick={() => { setMode(m); setError(''); setAuthError(''); }}>
                   {ico} {lbl}
                 </button>
               ))}
             </div>
 
-            {mode === "register" && (
+            {mode === 'register' && (
               <>
-                <div className="ap-role-lbl">I am a —</div>
+                <div className="ap-role-lbl">I am a</div>
                 <div className="ap-roles">
-                  {[["shopOwner","🏪","Shop Owner"],["wholesaler","🏭","Wholesaler"]].map(([v,ico,lbl]) => (
-                    <button key={v} className={`ap-role ${role===v?"on":"off"}`} onClick={() => setRole(v)}>
+                  {[['shopOwner', 'SO', 'Shop Owner'], ['wholesaler', 'WH', 'Wholesaler']].map(([v, ico, lbl]) => (
+                    <button key={v} className={`ap-role ${role===v?'on':'off'}`} onClick={() => setRole(v)}>
                       {ico} {lbl}
                     </button>
                   ))}
@@ -282,32 +284,32 @@ export default function AuthPage() {
             )}
 
             <div className="ap-form">
-              {mode === "register" && (
+              {mode === 'register' && (
                 <>
                   <div className="ap-row">
                     <input className="ap-input" placeholder="Full name"
-                           value={form.name} onChange={e => set("name", e.target.value)} />
+                           value={form.name} onChange={e => set('name', e.target.value)} />
                     <input className="ap-input" placeholder="Shop / Business name"
-                           value={form.shopName} onChange={e => set("shopName", e.target.value)} />
+                           value={form.shopName} onChange={e => set('shopName', e.target.value)} />
                   </div>
 
                   <div className="ap-row">
                     <select className="ap-input" value={selectedState}
                             onChange={e => setSelectedState(e.target.value)}>
-                      <option value="">— Select State / UT —</option>
+                      <option value="">Select State / UT</option>
                       {STATES.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                     <select className="ap-input" value={form.district}
-                            onChange={e => set("district", e.target.value)}
+                            onChange={e => set('district', e.target.value)}
                             disabled={!selectedState}>
-                      <option value="">— Select District —</option>
+                      <option value="">Select District</option>
                       {districts.map(d => <option key={d} value={d}>{d}</option>)}
                     </select>
                   </div>
 
-                  {role === "wholesaler" && (
-                    <input className="ap-input" placeholder="GST Number (optional — 15 chars)"
-                           value={form.gstNumber} onChange={e => set("gstNumber", e.target.value)} />
+                  {role === 'wholesaler' && (
+                    <input className="ap-input" placeholder="GST Number (optional - 15 chars)"
+                           value={form.gstNumber} onChange={e => set('gstNumber', e.target.value)} />
                   )}
 
                   <div className="ap-div">
@@ -318,18 +320,18 @@ export default function AuthPage() {
                 </>
               )}
 
-              <input className="ap-input" placeholder="📱  Phone number (10 digits)"
-                     value={form.phone} onChange={e => set("phone", e.target.value)} />
-              <input className="ap-input" type="password" placeholder="🔒  Password (min 8 chars)"
-                     value={form.password} onChange={e => set("password", e.target.value)}
-                     onKeyDown={e => e.key === "Enter" && submit()} />
+              <input className="ap-input" placeholder="Phone number (10 digits)"
+                     value={form.phone} onChange={e => set('phone', e.target.value)} />
+              <input className="ap-input" type="password" placeholder="Password (min 8 chars)"
+                     value={form.password} onChange={e => set('password', e.target.value)}
+                     onKeyDown={e => e.key === 'Enter' && submit()} />
 
-              {error && <div className="ap-err">⚠ {error}</div>}
+              {(authError || error) && <div className="ap-err">WARN {error || authError}</div>}
 
               <button className="ap-btn" onClick={submit} disabled={loading}>
                 {loading
                   ? <><span className="ap-spin" />Please wait...</>
-                  : mode === "login" ? "Enter Mandi Terminal →" : "Create Account →"}
+                  : mode === 'login' ? 'Enter Mandi Terminal ->' : 'Create Account ->'}
               </button>
             </div>
           </div>
