@@ -8,6 +8,7 @@ const ROLES = new Set(['shopOwner', 'wholesaler']);
 
 const normalizePhone = (phone = '') => String(phone).replace(/\D/g, '');
 const normalizeText = (value = '') => String(value).trim();
+const normalizeGst = (value = '') => String(value).trim().toUpperCase();
 
 function safeUser(user) {
   return {
@@ -40,7 +41,7 @@ router.post('/register', async (req, res) => {
       shopName: normalizeText(req.body.shopName),
       district: normalizeText(req.body.district),
       address: normalizeText(req.body.address),
-      gstNumber: normalizeText(req.body.gstNumber),
+      gstNumber: normalizeGst(req.body.gstNumber),
     };
 
     if (!payload.name || !payload.phone || !payload.password || !payload.role || !payload.shopName || !payload.district) {
@@ -51,12 +52,16 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Invalid role selected' });
     }
 
-    if (payload.phone.length < 10) {
-      return res.status(400).json({ error: 'Enter a valid phone number' });
+    if (payload.phone.length !== 10) {
+      return res.status(400).json({ error: 'Enter a valid 10-digit phone number' });
     }
 
-    if (payload.password.length < 6) {
-      return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    if (payload.password.length < 8) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters' });
+    }
+
+    if (payload.role === 'wholesaler' && payload.gstNumber && payload.gstNumber.length !== 15) {
+      return res.status(400).json({ error: 'GST number must be 15 characters' });
     }
 
     const existingUser = await User.findOne({ phone: payload.phone });
@@ -82,6 +87,10 @@ router.post('/login', async (req, res) => {
 
     if (!phone || !password) {
       return res.status(400).json({ error: 'Phone and password are required' });
+    }
+
+    if (phone.length !== 10) {
+      return res.status(400).json({ error: 'Enter a valid 10-digit phone number' });
     }
 
     const user = await User.findOne({ phone }).select('+password');

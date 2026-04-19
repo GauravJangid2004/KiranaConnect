@@ -4,7 +4,7 @@ export function authenticate(req, res, next) {
   const authHeader = req.headers.authorization || '';
   const [scheme, token] = authHeader.split(' ');
 
-  if (scheme !== 'Bearer' || !token) {
+  if (!/^Bearer$/i.test(scheme || '') || !token) {
     return res.status(401).json({ error: 'Authorization token required' });
   }
 
@@ -21,6 +21,10 @@ export function authenticate(req, res, next) {
 }
 
 export const requireRole = (...roles) => (req, res, next) => {
+  if (roles.length === 0) {
+    return res.status(500).json({ error: 'Role guard misconfigured' });
+  }
+
   if (!req.user) {
     return res.status(401).json({ error: 'Authentication required' });
   }
