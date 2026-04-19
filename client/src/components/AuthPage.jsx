@@ -24,6 +24,15 @@ const FEATURE_CARDS = [
   { icon: 'ACL', label: 'Strict Guards', sub: 'Wholesaler and shop owner routes stay separated.' },
 ];
 
+const FIELD_META = {
+  name: { icon: 'NM', label: 'Full name' },
+  shopName: { icon: 'SH', label: 'Shop / Business name' },
+  district: { icon: 'DT', label: 'District' },
+  gstNumber: { icon: 'GST', label: 'GST number' },
+  phone: { icon: 'PH', label: 'Phone number' },
+  password: { icon: 'PW', label: 'Password' },
+};
+
 function BadgeIcon({ children, tone = 'saffron' }) {
   const tones = {
     saffron: { bg: 'rgba(255,107,53,.12)', border: 'rgba(255,107,53,.24)', color: 'var(--saffron)' },
@@ -93,11 +102,12 @@ function InputShell({ icon, children }) {
 }
 
 export default function AuthPage() {
-  const { login, register } = useAuth();
+  const { login, register, authError, setAuthError } = useAuth();
   const [mode, setMode] = useState('login');
   const [role, setRole] = useState('shopOwner');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [touched, setTouched] = useState({});
   const [form, setForm] = useState({
     phone: '',
     password: '',
@@ -108,16 +118,49 @@ export default function AuthPage() {
   });
 
   const set = (key, value) => setForm((current) => ({ ...current, [key]: value }));
+  const normalizePhone = (value) => value.replace(/\D/g, '').slice(0, 10);
+
+  const validationErrors = {
+    ...(mode === 'register' && !form.name.trim() ? { name: 'Full name is required' } : {}),
+    ...(mode === 'register' && !form.shopName.trim() ? { shopName: 'Shop or business name is required' } : {}),
+    ...(!/^\d{10}$/.test(normalizePhone(form.phone)) ? { phone: 'Enter a valid 10-digit phone number' } : {}),
+    ...(form.password.length < 8 ? { password: 'Password must be at least 8 characters' } : {}),
+    ...(mode === 'register' && role === 'wholesaler' && form.gstNumber && form.gstNumber.trim().length !== 15
+      ? { gstNumber: 'GST must be exactly 15 characters' }
+      : {}),
+  };
+
+  const formIsValid = Object.keys(validationErrors).length === 0;
 
   const submit = async () => {
     setError('');
+    setAuthError('');
+    setTouched({
+      name: true,
+      shopName: true,
+      district: true,
+      gstNumber: true,
+      phone: true,
+      password: true,
+    });
+
+    if (!formIsValid) {
+      setError('Please fix the highlighted fields before continuing.');
+      return;
+    }
+
     setLoading(true);
 
     try {
       if (mode === 'login') {
-        await login(form.phone, form.password);
+        await login(normalizePhone(form.phone), form.password);
       } else {
-        await register({ ...form, role });
+        await register({
+          ...form,
+          phone: normalizePhone(form.phone),
+          gstNumber: form.gstNumber.trim().toUpperCase(),
+          role,
+        });
       }
     } catch (e) {
       setError(e?.error || 'Something went wrong');
@@ -288,6 +331,7 @@ export default function AuthPage() {
                     onClick={() => {
                       setMode(nextMode);
                       setError('');
+                      setAuthError('');
                     }}
                     style={{
                       minHeight: 48,
@@ -359,8 +403,17 @@ export default function AuthPage() {
               {mode === 'register' && (
                 <>
                   <InputShell icon="NM">
-                    <input className="input" placeholder="Full name" value={form.name} onChange={(e) => set('name', e.target.value)} />
+                    <input
+                      className="input"
+                      placeholder="Full name"
+                      value={form.name}
+                      onChange={(e) => set('name', e.target.value)}
+                      onBlur={() => setTouched((current) => ({ ...current, name: true }))}
+                    />
                   </InputShell>
+                  {touched.name && validationErrors.name && (
+                    <div style={{ marginTop: -4, paddingLeft: 6, fontSize: 12, color: '#ff7a92' }}>{validationErrors.name}</div>
+                  )}
 
                   <InputShell icon="SH">
                     <input
@@ -368,14 +421,19 @@ export default function AuthPage() {
                       placeholder="Shop / Business name"
                       value={form.shopName}
                       onChange={(e) => set('shopName', e.target.value)}
+                      onBlur={() => setTouched((current) => ({ ...current, shopName: true }))}
                     />
                   </InputShell>
+                  {touched.shopName && validationErrors.shopName && (
+                    <div style={{ marginTop: -4, paddingLeft: 6, fontSize: 12, color: '#ff7a92' }}>{validationErrors.shopName}</div>
+                  )}
 
                   <InputShell icon="DT">
                     <select
                       className="input"
                       value={form.district}
                       onChange={(e) => set('district', e.target.value)}
+                      onBlur={() => setTouched((current) => ({ ...current, district: true }))}
                       style={{ cursor: 'pointer' }}
                     >
                       {DISTRICTS.map((district) => (
@@ -392,16 +450,29 @@ export default function AuthPage() {
                         className="input"
                         placeholder="GST Number (optional)"
                         value={form.gstNumber}
-                        onChange={(e) => set('gstNumber', e.target.value)}
+                        onChange={(e) => set('gstNumber', e.target.value.toUpperCase().slice(0, 15))}
+                        onBlur={() => setTouched((current) => ({ ...current, gstNumber: true }))}
                       />
                     </InputShell>
+                  )}
+                  {touched.gstNumber && validationErrors.gstNumber && (
+                    <div style={{ marginTop: -4, paddingLeft: 6, fontSize: 12, color: '#ff7a92' }}>{validationErrors.gstNumber}</div>
                   )}
                 </>
               )}
 
               <InputShell icon="PH">
-                <input className="input" placeholder="Phone number" value={form.phone} onChange={(e) => set('phone', e.target.value)} />
+                <input
+                  className="input"
+                  placeholder="Phone number"
+                  value={form.phone}
+                  onChange={(e) => set('phone', normalizePhone(e.target.value))}
+                  onBlur={() => setTouched((current) => ({ ...current, phone: true }))}
+                />
               </InputShell>
+              {touched.phone && validationErrors.phone && (
+                <div style={{ marginTop: -4, paddingLeft: 6, fontSize: 12, color: '#ff7a92' }}>{validationErrors.phone}</div>
+              )}
 
               <InputShell icon="PW">
                 <input
@@ -410,11 +481,15 @@ export default function AuthPage() {
                   placeholder="Password"
                   value={form.password}
                   onChange={(e) => set('password', e.target.value)}
+                  onBlur={() => setTouched((current) => ({ ...current, password: true }))}
                   onKeyDown={(e) => e.key === 'Enter' && submit()}
                 />
               </InputShell>
+              {touched.password && validationErrors.password && (
+                <div style={{ marginTop: -4, paddingLeft: 6, fontSize: 12, color: '#ff7a92' }}>{validationErrors.password}</div>
+              )}
 
-              {error && (
+              {(authError || error) && (
                 <div
                   style={{
                     padding: '13px 14px',
@@ -427,14 +502,31 @@ export default function AuthPage() {
                   }}
                 >
                   <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, marginRight: 8 }}>ERR</span>
-                  {error}
+                  {error || authError}
                 </div>
               )}
+
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  gap: 12,
+                  padding: '0 4px',
+                  color: 'var(--text-muted)',
+                  fontSize: 12,
+                }}
+              >
+                <span>{mode === 'login' ? 'Use your registered number to restore access.' : 'Passwords need 8+ characters.'}</span>
+                <span style={{ fontFamily: 'var(--font-mono)' }}>
+                  {mode === 'register' ? `${role === 'wholesaler' ? 'WH' : 'SO'} MODE` : 'AUTH READY'}
+                </span>
+              </div>
 
               <button
                 className="btn btn-primary"
                 onClick={submit}
-                disabled={loading}
+                disabled={loading || !formIsValid}
                 style={{
                   minHeight: 54,
                   borderRadius: 16,

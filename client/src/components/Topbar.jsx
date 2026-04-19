@@ -2,15 +2,15 @@ import { useEffect, useMemo, useState } from 'react';
 import useAuth from '../contexts/AuthContext.jsx';
 
 const SHOP_OWNER_TABS = [
-  { id: 'catalogue', label: 'Catalogue', icon: 'CT' },
-  { id: 'cart', label: 'Cart', icon: 'CR' },
-  { id: 'myorders', label: 'My Orders', icon: 'OR' },
+  { id: 'catalogue', label: 'Catalogue', icon: 'Browse' },
+  { id: 'cart', label: 'Cart', icon: 'Basket' },
+  { id: 'myorders', label: 'My Orders', icon: 'Orders' },
 ];
 
 const WHOLESALER_TABS = [
-  { id: 'wh-orders', label: 'Incoming', icon: 'IN' },
-  { id: 'wh-batches', label: 'Batches', icon: 'BT' },
-  { id: 'wh-products', label: 'Products', icon: 'PD' },
+  { id: 'wh-orders', label: 'Incoming', icon: 'Orders' },
+  { id: 'wh-batches', label: 'Batches', icon: 'Batch' },
+  { id: 'wh-products', label: 'Products', icon: 'Stock' },
 ];
 
 export default function Topbar({ activeTab, setActiveTab }) {
@@ -90,6 +90,7 @@ export default function Topbar({ activeTab, setActiveTab }) {
                 background: activeTab === tab.id ? 'rgba(255,107,53,.12)' : 'transparent',
                 border: `1px solid ${activeTab === tab.id ? 'rgba(255,107,53,.26)' : 'var(--border)'}`,
                 color: activeTab === tab.id ? 'var(--text-primary)' : 'var(--text-secondary)',
+                boxShadow: activeTab === tab.id ? '0 10px 20px rgba(255,107,53,.08)' : 'none',
               }}
             >
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}>{tab.icon}</span>
@@ -102,6 +103,7 @@ export default function Topbar({ activeTab, setActiveTab }) {
           <span className={`badge ${isWholesaler ? 'badge-violet' : 'badge-info'}`}>
             {isWholesaler ? 'Wholesaler' : 'ShopOwner'}
           </span>
+          <span className="badge badge-primary">{isWholesaler ? 'Wholesale Desk' : 'Retail Desk'}</span>
           <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{user?.shopName}</span>
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)' }}>
             {time.toLocaleTimeString('en-IN', { hour12: false })}
