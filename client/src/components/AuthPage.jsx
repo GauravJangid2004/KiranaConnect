@@ -44,10 +44,10 @@ const INDIA_DATA = {
 const STATES = Object.keys(INDIA_DATA).sort();
 
 const FEATURES = [
-  { icon: 'PR', label: 'Live Wholesale Prices', sub: 'Tiered slab - best rate auto-applied' },
-  { icon: 'BT', label: '6-Hour Dispatch Batches', sub: 'Orders aggregated, never missed' },
-  { icon: 'RC', label: 'Redis-Cached Catalogue', sub: '24h TTL - sub-ms reads' },
-  { icon: 'SC', label: 'Atomic Stock Control', sub: 'Zero overselling, guaranteed' },
+  { icon: '⚡', label: 'Live Wholesale Prices', sub: 'Tiered slab - best rate auto-applied' },
+  { icon: '🔄', label: '6-Hour Dispatch Batches', sub: 'Orders aggregated, never missed' },
+  { icon: '⚛️', label: 'Redis-Cached Catalogue', sub: '24h TTL - sub-ms reads' },
+  { icon: '🔒', label: 'Atomic Stock Control', sub: 'Zero overselling, guaranteed' },
 ];
 
 export default function AuthPage() {
@@ -144,7 +144,7 @@ export default function AuthPage() {
         .ap-glow1 { position: absolute; top: -80px; right: -80px; width: 280px; height: 280px; border-radius: 50%; background: radial-gradient(circle, rgba(255,107,53,0.13) 0%, transparent 65%); pointer-events: none; }
         .ap-glow2 { position: absolute; bottom: -60px; left: -60px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(124,77,255,0.08) 0%, transparent 65%); pointer-events: none; }
 
-        .ap-logo { width: 52px; height: 52px; border-radius: 16px; background: linear-gradient(135deg, rgba(255,107,53,0.25), rgba(255,107,53,0.08)); border: 1px solid rgba(255,107,53,0.3); display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 18px; box-shadow: 0 8px 24px rgba(255,107,53,0.15); position: relative; z-index: 1; }
+        .ap-logo { width: 58px; height: 58px; border-radius: 18px; background: linear-gradient(135deg, rgba(255,107,53,0.28), rgba(255,107,53,0.08)); border: 1px solid rgba(255,107,53,0.3); display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 18px; box-shadow: 0 12px 30px rgba(255,107,53,0.18); position: relative; z-index: 1; }
         .ap-brand { font-size: 26px; font-weight: 800; letter-spacing: -0.04em; color: #F5F0FF; line-height: 1.1; position: relative; z-index: 1; }
         .ap-tag { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; background: rgba(255,107,53,0.1); border: 1px solid rgba(255,107,53,0.2); border-radius: 20px; padding: 4px 10px; font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; letter-spacing: 0.12em; color: #FF6B35; text-transform: uppercase; position: relative; z-index: 1; }
         .ap-dot { width: 6px; height: 6px; border-radius: 50%; background: #FF6B35; animation: blink 1.4s infinite; }
@@ -154,11 +154,11 @@ export default function AuthPage() {
         .ap-feats { display: flex; flex-direction: column; gap: 20px; flex: 1; position: relative; z-index: 1; }
         .ap-feat { display: flex; gap: 14px; align-items: flex-start; opacity: 0; transform: translateX(-14px); transition: opacity 0.45s ease, transform 0.45s ease; }
         .ap-feat.on { opacity: 1; transform: translateX(0); }
-        .ap-feat-ico { width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0; background: rgba(255,107,53,0.09); border: 1px solid rgba(255,107,53,0.16); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ap-feat-ico { width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0; background: linear-gradient(180deg, rgba(255,107,53,0.16), rgba(255,107,53,0.05)); border: 1px solid rgba(255,107,53,0.2); display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.06); }
         .ap-feat-lbl { font-size: 12.5px; font-weight: 700; color: #E8E4FF; margin-bottom: 3px; }
         .ap-feat-sub { font-size: 11px; color: #4a4a80; line-height: 1.5; }
 
-        .ap-demo { margin-top: 30px; padding: 14px 16px; background: rgba(255,107,53,0.05); border: 1px solid rgba(255,107,53,0.1); border-radius: 12px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #4a4a80; line-height: 1.9; position: relative; z-index: 1; }
+        .ap-demo { margin-top: 30px; padding: 16px 18px; background: linear-gradient(180deg, rgba(255,107,53,0.08), rgba(255,107,53,0.03)); border: 1px solid rgba(255,107,53,0.12); border-radius: 16px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #8d8db7; line-height: 1.9; position: relative; z-index: 1; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
         .ap-demo b { color: #FF6B35; font-weight: 500; }
 
         /* RIGHT */
@@ -167,13 +167,13 @@ export default function AuthPage() {
         .ap-subhead { font-size: 13px; color: #4a4a80; margin-bottom: 30px; }
 
         .ap-tabs { display: flex; background: #0c0c18; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 4px; margin-bottom: 26px; gap: 4px; }
-        .ap-tab { flex: 1; padding: 10px; border: none; border-radius: 9px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .ap-tab { flex: 1; padding: 11px; border: none; border-radius: 9px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .ap-tab.on  { background: linear-gradient(135deg, #FF6B35, #d94f1c); color: #fff; box-shadow: 0 4px 18px rgba(255,107,53,0.32); }
         .ap-tab.off { background: transparent; color: #4a4a80; }
 
         .ap-role-lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #4a4a80; margin-bottom: 9px; }
         .ap-roles { display: flex; gap: 8px; margin-bottom: 20px; }
-        .ap-role { flex: 1; padding: 13px 0; border-radius: 12px; border: 1px solid; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 7px; }
+        .ap-role { flex: 1; padding: 13px 0; border-radius: 12px; border: 1px solid; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .ap-role.on  { background: rgba(255,107,53,0.1); border-color: rgba(255,107,53,0.35); color: #FF6B35; }
         .ap-role.off { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.07); color: #4a4a80; }
 
@@ -189,9 +189,9 @@ export default function AuthPage() {
         .ap-div-line { flex: 1; height: 1px; background: rgba(255,255,255,0.05); }
         .ap-div-txt { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: #2e2e50; text-transform: uppercase; }
 
-        .ap-err { background: rgba(255,23,68,0.07); border: 1px solid rgba(255,23,68,0.2); border-radius: 10px; padding: 11px 15px; font-size: 12.5px; color: #FF1744; }
+        .ap-err { background: rgba(255,23,68,0.09); border: 1px solid rgba(255,23,68,0.22); border-radius: 12px; padding: 11px 15px; font-size: 12.5px; color: #ff7a92; }
 
-        .ap-btn { width: 100%; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, #FF6B35, #d94f1c); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14.5px; font-weight: 800; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 24px rgba(255,107,53,0.35); position: relative; overflow: hidden; margin-top: 4px; }
+        .ap-btn { width: 100%; padding: 15px 16px; border: none; border-radius: 14px; background: linear-gradient(135deg, #FF6B35, #d94f1c); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14.5px; font-weight: 800; cursor: pointer; transition: all 0.2s; box-shadow: 0 10px 28px rgba(255,107,53,0.28); position: relative; overflow: hidden; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .ap-btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.14) 0%, transparent 55%); }
         .ap-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(255,107,53,0.45); }
         .ap-btn:disabled { opacity: 0.55; cursor: not-allowed; }
@@ -226,9 +226,9 @@ export default function AuthPage() {
           {/* LEFT */}
           <div className="ap-left">
             <div className="ap-glow1" /><div className="ap-glow2" />
-            <div className="ap-logo">KC</div>
+            <div className="ap-logo">🏪</div>
             <div className="ap-brand">Kirana<br />Connect</div>
-            <div className="ap-tag"><span className="ap-dot" /> B2B Wholesale - Pan India</div>
+            <div className="ap-tag"><span className="ap-dot" /> B2B Wholesale · Pan India</div>
             <div className="ap-sep" />
             <div className="ap-feats">
               {FEATURES.map(({ icon, label, sub }, i) => (
@@ -243,9 +243,9 @@ export default function AuthPage() {
               ))}
             </div>
             <div className="ap-demo">
-              <div>ShopOwner Demo</div>
+              <div>📱 ShopOwner Demo</div>
               <div><b>9876543211</b> / password123</div>
-              <div style={{ marginTop: 6 }}>Wholesaler Demo</div>
+              <div style={{ marginTop: 6 }}>🏭 Wholesaler Demo</div>
               <div><b>9876543210</b> / password123</div>
             </div>
           </div>
@@ -253,16 +253,16 @@ export default function AuthPage() {
           {/* RIGHT */}
           <div className="ap-right">
             <div className="ap-heading">
-              {mode === 'login' ? 'Welcome back' : 'Join the Mandi'}
+              {mode === 'login' ? 'Welcome back 👋' : 'Join the Mandi 🏪'}
             </div>
             <div className="ap-subhead">
               {mode === 'login'
                 ? 'Sign in to your KiranaConnect account'
-                : 'Create your account - available across all of India'}
+                : 'Create your account — available across all of India'}
             </div>
 
             <div className="ap-tabs">
-              {[['login', 'IN', 'Sign In'], ['register', 'UP', 'Register']].map(([m, ico, lbl]) => (
+              {[['login', '🔑', 'Sign In'], ['register', '📝', 'Register']].map(([m, ico, lbl]) => (
                 <button key={m} className={`ap-tab ${mode===m?'on':'off'}`}
                         onClick={() => { setMode(m); setError(''); setAuthError(''); }}>
                   {ico} {lbl}
@@ -272,9 +272,9 @@ export default function AuthPage() {
 
             {mode === 'register' && (
               <>
-                <div className="ap-role-lbl">I am a</div>
+                <div className="ap-role-lbl">I am a —</div>
                 <div className="ap-roles">
-                  {[['shopOwner', 'SO', 'Shop Owner'], ['wholesaler', 'WH', 'Wholesaler']].map(([v, ico, lbl]) => (
+                  {[['shopOwner', '🏪', 'Shop Owner'], ['wholesaler', '🏭', 'Wholesaler']].map(([v, ico, lbl]) => (
                     <button key={v} className={`ap-role ${role===v?'on':'off'}`} onClick={() => setRole(v)}>
                       {ico} {lbl}
                     </button>
@@ -320,18 +320,18 @@ export default function AuthPage() {
                 </>
               )}
 
-              <input className="ap-input" placeholder="Phone number (10 digits)"
+              <input className="ap-input" placeholder="📱  Phone number (10 digits)"
                      value={form.phone} onChange={e => set('phone', e.target.value)} />
-              <input className="ap-input" type="password" placeholder="Password (min 8 chars)"
+              <input className="ap-input" type="password" placeholder="🔒  Password (min 8 chars)"
                      value={form.password} onChange={e => set('password', e.target.value)}
                      onKeyDown={e => e.key === 'Enter' && submit()} />
 
-              {(authError || error) && <div className="ap-err">WARN {error || authError}</div>}
+              {(authError || error) && <div className="ap-err">⚠ {error || authError}</div>}
 
               <button className="ap-btn" onClick={submit} disabled={loading}>
                 {loading
                   ? <><span className="ap-spin" />Please wait...</>
-                  : mode === 'login' ? 'Enter Mandi Terminal ->' : 'Create Account ->'}
+                  : mode === 'login' ? 'Enter Mandi Terminal →' : 'Create Account →'}
               </button>
             </div>
           </div>
