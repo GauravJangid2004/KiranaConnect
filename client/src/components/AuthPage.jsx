@@ -235,11 +235,10 @@ export default function AuthPage() {
 
           <div style={{ marginTop: 34, maxWidth: 470 }}>
             <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3.2rem)', lineHeight: 1, fontWeight: 800, letterSpacing: '-.06em' }}>
-              Secure dual-role access for the marketplace.
+              Login for shop owners and wholesalers
             </h1>
             <p style={{ marginTop: 18, color: 'var(--text-secondary)', fontSize: 15, lineHeight: 1.8 }}>
-              This login flow demonstrates the exact auth ownership for your project: bcrypt password hashing, JWT-based
-              sessions, role-aware middleware, and frontend session persistence with Axios.
+              Access your orders, products, stock updates, and daily business activity from one simple and secure place.
             </p>
           </div>
 
