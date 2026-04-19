@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { AuthProvider, useAuth } from './contexts/AuthContext.jsx';
-import AuthPage from './components/AuthPage.jsx';
-import Topbar from './components/Topbar.jsx';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import AuthPage from './components/AuthPage';
+import Topbar from './components/Topbar';
 
 const SHOP_OWNER_TABS = ['catalogue', 'cart', 'myorders'];
 const WHOLESALER_TABS = ['wh-orders', 'wh-batches', 'wh-products'];

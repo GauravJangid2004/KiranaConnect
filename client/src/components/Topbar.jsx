@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useAuth } from '../contexts/AuthContext.jsx';
+import { useAuth } from '../contexts/AuthContext';
 
 
 const SHOP_OWNER_TABS = [
