@@ -102,9 +102,12 @@ export default function AuthPage() {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: #05050d;
+          background:
+            radial-gradient(circle at 10% 10%, rgba(255,107,53,0.14), transparent 24%),
+            radial-gradient(circle at 90% 14%, rgba(84,213,255,0.1), transparent 20%),
+            linear-gradient(180deg, #05070d 0%, #09101a 48%, #0b1220 100%);
           font-family: 'Plus Jakarta Sans', sans-serif;
-          padding: 20px;
+          padding: 26px 18px;
           position: relative;
           overflow: hidden;
         }
@@ -124,94 +127,98 @@ export default function AuthPage() {
         }
 
         .ap-card {
-          display: flex; width: 100%; max-width: 1020px; min-height: 620px;
-          border-radius: 28px; border: 1px solid rgba(255,255,255,0.07);
+          display: flex; width: 100%; max-width: 1140px; min-height: 670px;
+          border-radius: 30px; border: 1px solid rgba(82,103,137,0.28);
           overflow: hidden; position: relative; z-index: 1;
-          box-shadow: 0 0 0 1px rgba(255,107,53,0.04), 0 50px 130px rgba(0,0,0,0.85);
+          box-shadow: 0 0 0 1px rgba(255,107,53,0.04), 0 40px 120px rgba(0,0,0,0.48);
           opacity: 0; transform: translateY(24px) scale(0.99);
           transition: opacity 0.55s cubic-bezier(.22,1,.36,1), transform 0.55s cubic-bezier(.22,1,.36,1);
+          backdrop-filter: blur(22px);
         }
         .ap-card.on { opacity: 1; transform: translateY(0) scale(1); }
 
         /* LEFT */
         .ap-left {
-          width: 340px; flex-shrink: 0;
-          background: linear-gradient(160deg, #0f0f1e 0%, #080812 100%);
-          border-right: 1px solid rgba(255,255,255,0.05);
-          padding: 44px 36px; display: flex; flex-direction: column;
+          width: 390px; flex-shrink: 0;
+          background: linear-gradient(165deg, rgba(17,23,36,.98) 0%, rgba(10,14,22,.98) 100%);
+          border-right: 1px solid rgba(82,103,137,0.24);
+          padding: 48px 38px; display: flex; flex-direction: column;
           position: relative; overflow: hidden;
         }
         .ap-glow1 { position: absolute; top: -80px; right: -80px; width: 280px; height: 280px; border-radius: 50%; background: radial-gradient(circle, rgba(255,107,53,0.13) 0%, transparent 65%); pointer-events: none; }
         .ap-glow2 { position: absolute; bottom: -60px; left: -60px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(124,77,255,0.08) 0%, transparent 65%); pointer-events: none; }
 
         .ap-logo { width: 58px; height: 58px; border-radius: 18px; background: linear-gradient(135deg, rgba(255,107,53,0.28), rgba(255,107,53,0.08)); border: 1px solid rgba(255,107,53,0.3); display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 18px; box-shadow: 0 12px 30px rgba(255,107,53,0.18); position: relative; z-index: 1; }
-        .ap-brand { font-size: 26px; font-weight: 800; letter-spacing: -0.04em; color: #F5F0FF; line-height: 1.1; position: relative; z-index: 1; }
-        .ap-tag { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; background: rgba(255,107,53,0.1); border: 1px solid rgba(255,107,53,0.2); border-radius: 20px; padding: 4px 10px; font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; letter-spacing: 0.12em; color: #FF6B35; text-transform: uppercase; position: relative; z-index: 1; }
+        .ap-brand { font-size: 28px; font-weight: 800; letter-spacing: -0.04em; color: #F5F0FF; line-height: 1.05; position: relative; z-index: 1; }
+        .ap-tag { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; background: rgba(255,107,53,0.1); border: 1px solid rgba(255,107,53,0.22); border-radius: 20px; padding: 5px 10px; font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; letter-spacing: 0.12em; color: #FF6B35; text-transform: uppercase; position: relative; z-index: 1; }
         .ap-dot { width: 6px; height: 6px; border-radius: 50%; background: #FF6B35; animation: blink 1.4s infinite; }
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
-        .ap-sep { height: 1px; background: linear-gradient(90deg, rgba(255,107,53,0.25), transparent); margin: 30px 0; }
+        .ap-sep { height: 1px; background: linear-gradient(90deg, rgba(255,107,53,0.25), transparent); margin: 32px 0; }
 
-        .ap-feats { display: flex; flex-direction: column; gap: 20px; flex: 1; position: relative; z-index: 1; }
+        .ap-feats { display: flex; flex-direction: column; gap: 18px; flex: 1; position: relative; z-index: 1; }
         .ap-feat { display: flex; gap: 14px; align-items: flex-start; opacity: 0; transform: translateX(-14px); transition: opacity 0.45s ease, transform 0.45s ease; }
         .ap-feat.on { opacity: 1; transform: translateX(0); }
         .ap-feat-ico { width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0; background: linear-gradient(180deg, rgba(255,107,53,0.16), rgba(255,107,53,0.05)); border: 1px solid rgba(255,107,53,0.2); display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.06); }
-        .ap-feat-lbl { font-size: 12.5px; font-weight: 700; color: #E8E4FF; margin-bottom: 3px; }
-        .ap-feat-sub { font-size: 11px; color: #4a4a80; line-height: 1.5; }
+        .ap-feat-lbl { font-size: 13px; font-weight: 700; color: #f0f4fb; margin-bottom: 4px; }
+        .ap-feat-sub { font-size: 12px; color: #9aa8c3; line-height: 1.6; }
 
-        .ap-demo { margin-top: 30px; padding: 16px 18px; background: linear-gradient(180deg, rgba(255,107,53,0.08), rgba(255,107,53,0.03)); border: 1px solid rgba(255,107,53,0.12); border-radius: 16px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #8d8db7; line-height: 1.9; position: relative; z-index: 1; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+        .ap-demo { margin-top: 30px; padding: 18px 18px; background: linear-gradient(180deg, rgba(255,107,53,0.08), rgba(255,107,53,0.03)); border: 1px solid rgba(255,107,53,0.12); border-radius: 18px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #a6b1c8; line-height: 1.9; position: relative; z-index: 1; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
         .ap-demo b { color: #FF6B35; font-weight: 500; }
 
         /* RIGHT */
-        .ap-right { flex: 1; background: #08080f; padding: 44px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; }
-        .ap-heading { font-size: 26px; font-weight: 800; letter-spacing: -0.03em; color: #F0F0FF; margin-bottom: 4px; }
-        .ap-subhead { font-size: 13px; color: #4a4a80; margin-bottom: 30px; }
+        .ap-right { flex: 1; background: linear-gradient(180deg, rgba(11,15,24,.98), rgba(8,11,18,.98)); padding: 48px 44px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; }
+        .ap-panel { max-width: 500px; margin: 0 auto; width: 100%; padding: 30px; border-radius: 24px; border: 1px solid rgba(82,103,137,0.24); background: linear-gradient(180deg, rgba(17,23,36,.82), rgba(11,15,24,.94)); box-shadow: 0 24px 56px rgba(0,0,0,.22); }
+        .ap-heading { font-size: 31px; font-weight: 800; letter-spacing: -0.04em; color: #F0F4FB; margin-bottom: 8px; line-height: 1.08; }
+        .ap-subhead { font-size: 14px; color: #99a5bc; margin-bottom: 30px; line-height: 1.7; }
 
-        .ap-tabs { display: flex; background: #0c0c18; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 4px; margin-bottom: 26px; gap: 4px; }
-        .ap-tab { flex: 1; padding: 11px; border: none; border-radius: 9px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .ap-tabs { display: flex; background: rgba(10,13,22,.86); border: 1px solid rgba(82,103,137,0.2); border-radius: 14px; padding: 4px; margin-bottom: 28px; gap: 4px; }
+        .ap-tab { flex: 1; padding: 12px; border: none; border-radius: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .ap-tab.on  { background: linear-gradient(135deg, #FF6B35, #d94f1c); color: #fff; box-shadow: 0 4px 18px rgba(255,107,53,0.32); }
-        .ap-tab.off { background: transparent; color: #4a4a80; }
+        .ap-tab.off { background: transparent; color: #92a0bb; }
 
-        .ap-role-lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #4a4a80; margin-bottom: 9px; }
+        .ap-role-lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #7e8ba6; margin-bottom: 10px; }
         .ap-roles { display: flex; gap: 8px; margin-bottom: 20px; }
-        .ap-role { flex: 1; padding: 13px 0; border-radius: 12px; border: 1px solid; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .ap-role { flex: 1; padding: 14px 0; border-radius: 12px; border: 1px solid; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .ap-role.on  { background: rgba(255,107,53,0.1); border-color: rgba(255,107,53,0.35); color: #FF6B35; }
-        .ap-role.off { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.07); color: #4a4a80; }
+        .ap-role.off { background: rgba(255,255,255,0.02); border-color: rgba(82,103,137,0.2); color: #92a0bb; }
 
-        .ap-form { display: flex; flex-direction: column; gap: 11px; }
-        .ap-row  { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
-        .ap-input { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 11px; color: #F0F0FF; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; padding: 12px 15px; outline: none; transition: all 0.2s; }
+        .ap-form { display: flex; flex-direction: column; gap: 12px; }
+        .ap-row  { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .ap-input { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(82,103,137,0.22); border-radius: 12px; color: #F0F4FB; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; padding: 13px 15px; outline: none; transition: all 0.2s; }
         .ap-input:focus { border-color: rgba(255,107,53,0.5); background: rgba(255,107,53,0.04); box-shadow: 0 0 0 3px rgba(255,107,53,0.08); }
-        .ap-input::placeholder { color: #2e2e50; }
+        .ap-input::placeholder { color: #6d7995; }
         .ap-input option { background: #0c0c18; color: #F0F0FF; }
         .ap-input:disabled { opacity: 0.35; cursor: not-allowed; }
 
         .ap-div { display: flex; align-items: center; gap: 10px; }
         .ap-div-line { flex: 1; height: 1px; background: rgba(255,255,255,0.05); }
-        .ap-div-txt { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: #2e2e50; text-transform: uppercase; }
+        .ap-div-txt { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: #75839d; text-transform: uppercase; }
 
         .ap-err { background: rgba(255,23,68,0.09); border: 1px solid rgba(255,23,68,0.22); border-radius: 12px; padding: 11px 15px; font-size: 12.5px; color: #ff7a92; }
 
         .ap-btn { width: 100%; padding: 15px 16px; border: none; border-radius: 14px; background: linear-gradient(135deg, #FF6B35, #d94f1c); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14.5px; font-weight: 800; cursor: pointer; transition: all 0.2s; box-shadow: 0 10px 28px rgba(255,107,53,0.28); position: relative; overflow: hidden; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .ap-btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.14) 0%, transparent 55%); }
-        .ap-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(255,107,53,0.45); }
+        .ap-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 14px 34px rgba(255,107,53,0.38); }
         .ap-btn:disabled { opacity: 0.55; cursor: not-allowed; }
         @keyframes spin { to{transform:rotate(360deg)} }
         .ap-spin { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.25); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 7px; vertical-align: middle; }
 
         @media (max-width: 860px) {
-          .ap-card { flex-direction: column; min-height: unset; max-width: 520px; }
+          .ap-card { flex-direction: column; min-height: unset; max-width: 560px; }
           .ap-left { width: 100%; padding: 32px 28px; }
           .ap-feats { flex-direction: row; flex-wrap: wrap; }
           .ap-feat { width: calc(50% - 10px); }
           .ap-right { padding: 32px 28px; }
+          .ap-panel { padding: 24px; }
         }
         @media (max-width: 540px) {
           .ap-root { padding: 10px; }
           .ap-card { border-radius: 20px; }
           .ap-left, .ap-right { padding: 24px 20px; }
+          .ap-panel { padding: 20px; border-radius: 20px; }
           .ap-feat { width: 100%; }
           .ap-row { grid-template-columns: 1fr; }
-          .ap-heading { font-size: 22px; }
+          .ap-heading { font-size: 25px; }
         }
       `}</style>
 
@@ -252,87 +259,89 @@ export default function AuthPage() {
 
           {/* RIGHT */}
           <div className="ap-right">
-            <div className="ap-heading">
-              {mode === 'login' ? 'Welcome back 👋' : 'Join the Mandi 🏪'}
-            </div>
-            <div className="ap-subhead">
-              {mode === 'login'
-                ? 'Sign in to your KiranaConnect account'
-                : 'Create your account — available across all of India'}
-            </div>
+            <div className="ap-panel">
+              <div className="ap-heading">
+                {mode === 'login' ? 'Welcome back 👋' : 'Join the Mandi 🏪'}
+              </div>
+              <div className="ap-subhead">
+                {mode === 'login'
+                  ? 'Sign in to your KiranaConnect account'
+                  : 'Create your account — available across all of India'}
+              </div>
 
-            <div className="ap-tabs">
-              {[['login', '🔑', 'Sign In'], ['register', '📝', 'Register']].map(([m, ico, lbl]) => (
-                <button key={m} className={`ap-tab ${mode===m?'on':'off'}`}
-                        onClick={() => { setMode(m); setError(''); setAuthError(''); }}>
-                  {ico} {lbl}
-                </button>
-              ))}
-            </div>
+              <div className="ap-tabs">
+                {[['login', '🔑', 'Sign In'], ['register', '📝', 'Register']].map(([m, ico, lbl]) => (
+                  <button key={m} className={`ap-tab ${mode===m?'on':'off'}`}
+                          onClick={() => { setMode(m); setError(''); setAuthError(''); }}>
+                    {ico} {lbl}
+                  </button>
+                ))}
+              </div>
 
-            {mode === 'register' && (
-              <>
-                <div className="ap-role-lbl">I am a —</div>
-                <div className="ap-roles">
-                  {[['shopOwner', '🏪', 'Shop Owner'], ['wholesaler', '🏭', 'Wholesaler']].map(([v, ico, lbl]) => (
-                    <button key={v} className={`ap-role ${role===v?'on':'off'}`} onClick={() => setRole(v)}>
-                      {ico} {lbl}
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
-
-            <div className="ap-form">
               {mode === 'register' && (
                 <>
-                  <div className="ap-row">
-                    <input className="ap-input" placeholder="Full name"
-                           value={form.name} onChange={e => set('name', e.target.value)} />
-                    <input className="ap-input" placeholder="Shop / Business name"
-                           value={form.shopName} onChange={e => set('shopName', e.target.value)} />
-                  </div>
-
-                  <div className="ap-row">
-                    <select className="ap-input" value={selectedState}
-                            onChange={e => setSelectedState(e.target.value)}>
-                      <option value="">Select State / UT</option>
-                      {STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
-                    <select className="ap-input" value={form.district}
-                            onChange={e => set('district', e.target.value)}
-                            disabled={!selectedState}>
-                      <option value="">Select District</option>
-                      {districts.map(d => <option key={d} value={d}>{d}</option>)}
-                    </select>
-                  </div>
-
-                  {role === 'wholesaler' && (
-                    <input className="ap-input" placeholder="GST Number (optional - 15 chars)"
-                           value={form.gstNumber} onChange={e => set('gstNumber', e.target.value)} />
-                  )}
-
-                  <div className="ap-div">
-                    <div className="ap-div-line" />
-                    <span className="ap-div-txt">credentials</span>
-                    <div className="ap-div-line" />
+                  <div className="ap-role-lbl">I am a —</div>
+                  <div className="ap-roles">
+                    {[['shopOwner', '🏪', 'Shop Owner'], ['wholesaler', '🏭', 'Wholesaler']].map(([v, ico, lbl]) => (
+                      <button key={v} className={`ap-role ${role===v?'on':'off'}`} onClick={() => setRole(v)}>
+                        {ico} {lbl}
+                      </button>
+                    ))}
                   </div>
                 </>
               )}
 
-              <input className="ap-input" placeholder="📱  Phone number (10 digits)"
-                     value={form.phone} onChange={e => set('phone', e.target.value)} />
-              <input className="ap-input" type="password" placeholder="🔒  Password (min 8 chars)"
-                     value={form.password} onChange={e => set('password', e.target.value)}
-                     onKeyDown={e => e.key === 'Enter' && submit()} />
+              <div className="ap-form">
+                {mode === 'register' && (
+                  <>
+                    <div className="ap-row">
+                      <input className="ap-input" placeholder="Full name"
+                            value={form.name} onChange={e => set('name', e.target.value)} />
+                      <input className="ap-input" placeholder="Shop / Business name"
+                            value={form.shopName} onChange={e => set('shopName', e.target.value)} />
+                    </div>
 
-              {(authError || error) && <div className="ap-err">⚠ {error || authError}</div>}
+                    <div className="ap-row">
+                      <select className="ap-input" value={selectedState}
+                              onChange={e => setSelectedState(e.target.value)}>
+                        <option value="">Select State / UT</option>
+                        {STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                      <select className="ap-input" value={form.district}
+                              onChange={e => set('district', e.target.value)}
+                              disabled={!selectedState}>
+                        <option value="">Select District</option>
+                        {districts.map(d => <option key={d} value={d}>{d}</option>)}
+                      </select>
+                    </div>
 
-              <button className="ap-btn" onClick={submit} disabled={loading}>
-                {loading
-                  ? <><span className="ap-spin" />Please wait...</>
-                  : mode === 'login' ? 'Enter Mandi Terminal →' : 'Create Account →'}
-              </button>
+                    {role === 'wholesaler' && (
+                      <input className="ap-input" placeholder="GST Number (optional - 15 chars)"
+                            value={form.gstNumber} onChange={e => set('gstNumber', e.target.value)} />
+                    )}
+
+                    <div className="ap-div">
+                      <div className="ap-div-line" />
+                      <span className="ap-div-txt">credentials</span>
+                      <div className="ap-div-line" />
+                    </div>
+                  </>
+                )}
+
+                <input className="ap-input" placeholder="📱  Phone number (10 digits)"
+                      value={form.phone} onChange={e => set('phone', e.target.value)} />
+                <input className="ap-input" type="password" placeholder="🔒  Password (min 8 chars)"
+                      value={form.password} onChange={e => set('password', e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && submit()} />
+
+                {(authError || error) && <div className="ap-err">⚠ {error || authError}</div>}
+
+                <button className="ap-btn" onClick={submit} disabled={loading}>
+                  {loading
+                    ? <><span className="ap-spin" />Please wait...</>
+                    : mode === 'login' ? 'Enter Mandi Terminal →' : 'Create Account →'}
+                </button>
+              </div>
             </div>
           </div>
 
