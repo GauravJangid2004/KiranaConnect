@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext.jsx';
-import { useCart } from '../contexts/CartContext.jsx';
+
 
 const SHOP_OWNER_TABS = [
   { id: 'catalogue', label: 'Catalogue', icon: 'CP', hint: 'Browse products' },
@@ -91,7 +91,7 @@ function TabButton({ tab, active, onClick, badge }) {
 
 export default function Topbar({ activeTab, setActiveTab }) {
   const { user, logout } = useAuth();
-  const { totals }       = useCart();
+  const totals = { itemCount: 0 };
   const [time, setTime]  = useState(new Date());
 
   const isWholesaler = user?.role === 'wholesaler';
