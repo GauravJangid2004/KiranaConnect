@@ -29,6 +29,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY));
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState('');
 
   useEffect(() => {
     if (!token) {
@@ -44,10 +45,12 @@ export function AuthProvider({ children }) {
         const { data } = await api.get('/auth/me');
         localStorage.setItem(USER_KEY, JSON.stringify(data.user));
         setUser(data.user);
+        setAuthError('');
       } catch {
         clearSession();
         setToken(null);
         setUser(null);
+        setAuthError('Your previous session expired. Please sign in again.');
       } finally {
         setLoading(false);
       }
@@ -61,6 +64,7 @@ export function AuthProvider({ children }) {
     storeSession(data.token, data.user);
     setToken(data.token);
     setUser(data.user);
+    setAuthError('');
     return data.user;
   }, []);
 
@@ -69,6 +73,7 @@ export function AuthProvider({ children }) {
     storeSession(data.token, data.user);
     setToken(data.token);
     setUser(data.user);
+    setAuthError('');
     return data.user;
   }, []);
 
@@ -76,10 +81,11 @@ export function AuthProvider({ children }) {
     clearSession();
     setToken(null);
     setUser(null);
+    setAuthError('');
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, authError, setAuthError, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

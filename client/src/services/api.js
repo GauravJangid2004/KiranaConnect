@@ -31,7 +31,12 @@ api.interceptors.response.use(
       localStorage.removeItem(USER_KEY);
     }
 
-    return Promise.reject(error.response?.data || { error: 'Network error' });
+    return Promise.reject(
+      error.response?.data || {
+        error: error.message || 'Network error',
+        status: error.response?.status || 0,
+      }
+    );
   }
 );
 
