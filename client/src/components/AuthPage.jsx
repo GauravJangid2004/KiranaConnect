@@ -1,546 +1,286 @@
-import { useState } from 'react';
-import useAuth from '../contexts/AuthContext.jsx';
+import { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
 
-const DISTRICTS = ['Jaipur', 'Jodhpur', 'Udaipur', 'Kota', 'Ajmer', 'Bikaner', 'Sikar'];
-const ROLE_OPTIONS = [
-  {
-    value: 'shopOwner',
-    label: 'Shop Owner',
-    icon: 'ST',
-    blurb: 'Browse catalogues, place orders, and manage repeat purchasing.',
-  },
-  {
-    value: 'wholesaler',
-    label: 'Wholesaler',
-    icon: 'WH',
-    blurb: 'Control inventory, accept orders, and dispatch batches securely.',
-  },
+const DISTRICTS = [
+  "Ajmer", "Alwar", "Banswara", "Baran", "Barmer", "Bharatpur", "Bhilwara",
+  "Bikaner", "Bundi", "Chittorgarh", "Churu", "Dausa", "Dholpur", "Dungarpur",
+  "Ganganagar", "Hanumangarh", "Jaipur", "Jaisalmer", "Jalore", "Jhalawar",
+  "Jhunjhunu", "Jodhpur", "Karauli", "Kota", "Nagaur", "Pali", "Pratapgarh",
+  "Rajsamand", "Sawai Madhopur", "Sikar", "Sirohi", "Tonk", "Udaipur",
 ];
 
-const FEATURE_CARDS = [
-  { icon: 'JWT', label: 'Dual-Role Access', sub: 'Each login is signed with role-specific claims.' },
-  { icon: 'BCR', label: 'Password Hashing', sub: 'Passwords are hashed before they ever reach storage.' },
-  { icon: 'API', label: 'Persistent Session', sub: 'The frontend restores the token after refresh.' },
-  { icon: 'ACL', label: 'Strict Guards', sub: 'Wholesaler and shop owner routes stay separated.' },
+const FEATURES = [
+  { icon: "⚡", label: "Live Wholesale Prices", sub: "Tiered slab pricing — best rate auto-applied" },
+  { icon: "🔄", label: "6-Hour Dispatch Batches", sub: "Orders aggregated, never missed" },
+  { icon: "⚛️", label: "Redis-Cached Catalogue", sub: "24h TTL · sub-millisecond reads" },
+  { icon: "🔒", label: "Atomic Stock Control", sub: "Race-condition proof · zero overselling" },
 ];
-
-const FIELD_META = {
-  name: { icon: 'NM', label: 'Full name' },
-  shopName: { icon: 'SH', label: 'Shop / Business name' },
-  district: { icon: 'DT', label: 'District' },
-  gstNumber: { icon: 'GST', label: 'GST number' },
-  phone: { icon: 'PH', label: 'Phone number' },
-  password: { icon: 'PW', label: 'Password' },
-};
-
-function BadgeIcon({ children, tone = 'saffron' }) {
-  const tones = {
-    saffron: { bg: 'rgba(255,107,53,.12)', border: 'rgba(255,107,53,.24)', color: 'var(--saffron)' },
-    ice: { bg: 'rgba(0,229,255,.12)', border: 'rgba(0,229,255,.22)', color: 'var(--ice)' },
-    emerald: { bg: 'rgba(0,230,118,.12)', border: 'rgba(0,230,118,.22)', color: 'var(--emerald)' },
-  };
-
-  const meta = tones[tone];
-
-  return (
-    <span
-      style={{
-        width: 40,
-        height: 40,
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 12,
-        background: meta.bg,
-        border: `1px solid ${meta.border}`,
-        color: meta.color,
-        fontFamily: 'var(--font-mono)',
-        fontWeight: 700,
-        fontSize: 12,
-        letterSpacing: '.06em',
-        flexShrink: 0,
-      }}
-    >
-      {children}
-    </span>
-  );
-}
-
-function InputShell({ icon, children }) {
-  return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: '42px 1fr',
-        alignItems: 'center',
-        gap: 10,
-        padding: 6,
-        borderRadius: 16,
-        border: '1px solid rgba(33,33,58,.9)',
-        background: 'rgba(6,6,12,.42)',
-      }}
-    >
-      <div
-        style={{
-          height: 44,
-          borderRadius: 12,
-          display: 'grid',
-          placeItems: 'center',
-          background: 'linear-gradient(180deg, rgba(23,23,40,.95), rgba(11,11,20,.95))',
-          color: 'var(--text-secondary)',
-          fontFamily: 'var(--font-mono)',
-          fontSize: 11,
-          fontWeight: 700,
-          letterSpacing: '.08em',
-        }}
-      >
-        {icon}
-      </div>
-      {children}
-    </div>
-  );
-}
 
 export default function AuthPage() {
-  const { login, register, authError, setAuthError } = useAuth();
-  const [mode, setMode] = useState('login');
-  const [role, setRole] = useState('shopOwner');
+  const { login, register } = useAuth();
+  const [mode, setMode]       = useState("login");
+  const [role, setRole]       = useState("shopOwner");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [touched, setTouched] = useState({});
-  const [form, setForm] = useState({
-    phone: '',
-    password: '',
-    name: '',
-    shopName: '',
-    district: 'Jaipur',
-    gstNumber: '',
+  const [error, setError]     = useState("");
+  const [mounted, setMounted] = useState(false);
+  const [form, setForm]       = useState({
+    phone: "", password: "", name: "", shopName: "", district: "Jaipur", gstNumber: "",
   });
 
-  const set = (key, value) => setForm((current) => ({ ...current, [key]: value }));
-  const normalizePhone = (value) => value.replace(/\D/g, '').slice(0, 10);
+  useEffect(() => { setTimeout(() => setMounted(true), 50); }, []);
 
-  const validationErrors = {
-    ...(mode === 'register' && !form.name.trim() ? { name: 'Full name is required' } : {}),
-    ...(mode === 'register' && !form.shopName.trim() ? { shopName: 'Shop or business name is required' } : {}),
-    ...(!/^\d{10}$/.test(normalizePhone(form.phone)) ? { phone: 'Enter a valid 10-digit phone number' } : {}),
-    ...(form.password.length < 8 ? { password: 'Password must be at least 8 characters' } : {}),
-    ...(mode === 'register' && role === 'wholesaler' && form.gstNumber && form.gstNumber.trim().length !== 15
-      ? { gstNumber: 'GST must be exactly 15 characters' }
-      : {}),
-  };
-
-  const formIsValid = Object.keys(validationErrors).length === 0;
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const submit = async () => {
-    setError('');
-    setAuthError('');
-    setTouched({
-      name: true,
-      shopName: true,
-      district: true,
-      gstNumber: true,
-      phone: true,
-      password: true,
-    });
-
-    if (!formIsValid) {
-      setError('Please fix the highlighted fields before continuing.');
-      return;
-    }
-
-    setLoading(true);
-
+    setError(""); setLoading(true);
     try {
-      if (mode === 'login') {
-        await login(normalizePhone(form.phone), form.password);
-      } else {
-        await register({
-          ...form,
-          phone: normalizePhone(form.phone),
-          gstNumber: form.gstNumber.trim().toUpperCase(),
-          role,
-        });
-      }
-    } catch (e) {
-      setError(e?.error || 'Something went wrong');
-    } finally {
-      setLoading(false);
-    }
+      if (mode === "login") await login(form.phone, form.password);
+      else await register({ ...form, role });
+    } catch (e) { setError(e.error || "Something went wrong"); }
+    finally { setLoading(false); }
   };
 
   return (
-    <div
-      className="grid-bg"
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '30px 18px',
-        backgroundColor: 'var(--bg-void)',
-        backgroundImage:
-          'radial-gradient(circle at top left, rgba(255,107,53,.16), transparent 28%), radial-gradient(circle at bottom right, rgba(0,229,255,.08), transparent 24%)',
-      }}
-    >
-      <div
-        className="animate-in"
-        style={{
-          width: '100%',
-          maxWidth: 1140,
-          display: 'flex',
-          flexWrap: 'wrap',
-          borderRadius: 30,
-          overflow: 'hidden',
-          border: '1px solid rgba(33,33,58,.95)',
-          background: 'rgba(8,8,16,.84)',
-          boxShadow: '0 34px 90px rgba(0,0,0,.45)',
-          backdropFilter: 'blur(16px)',
-        }}
-      >
-        <section
-          style={{
-            flex: '1 1 470px',
-            minWidth: 320,
-            padding: '42px clamp(24px, 4vw, 46px)',
-            background:
-              'linear-gradient(165deg, rgba(17,17,29,.98) 0%, rgba(11,11,20,.98) 55%, rgba(7,7,14,.98) 100%)',
-            borderRight: '1px solid rgba(33,33,58,.95)',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <BadgeIcon>KC</BadgeIcon>
-              <div>
-                <div style={{ fontSize: 25, fontWeight: 800, letterSpacing: '-.04em' }}>KiranaConnect</div>
-                <div
-                  style={{
-                    marginTop: 4,
-                    fontSize: 11,
-                    color: 'var(--saffron)',
-                    fontFamily: 'var(--font-mono)',
-                    letterSpacing: '.16em',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  Auth Gateway
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        .auth-root {
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #060608;
+          font-family: 'Sora', sans-serif;
+          padding: 24px;
+          position: relative;
+          overflow: hidden;
+        }
+        .auth-root::before {
+          content: '';
+          position: fixed;
+          top: -20%; left: -10%;
+          width: 60%; height: 60%;
+          background: radial-gradient(ellipse, rgba(255,107,53,0.07) 0%, transparent 70%);
+          pointer-events: none;
+        }
+        .auth-root::after {
+          content: '';
+          position: fixed;
+          bottom: -20%; right: -10%;
+          width: 50%; height: 50%;
+          background: radial-gradient(ellipse, rgba(124,77,255,0.05) 0%, transparent 70%);
+          pointer-events: none;
+        }
+        .auth-bg-dots {
+          position: fixed; inset: 0;
+          background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+          background-size: 28px 28px;
+          pointer-events: none;
+        }
+        .auth-card {
+          display: flex;
+          width: 100%; max-width: 960px; min-height: 600px;
+          border-radius: 24px;
+          border: 1px solid rgba(255,255,255,0.07);
+          overflow: hidden;
+          box-shadow: 0 40px 120px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,107,53,0.05);
+          position: relative; z-index: 1;
+          opacity: 0; transform: translateY(20px);
+          transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .auth-card.mounted { opacity: 1; transform: translateY(0); }
+
+        /* LEFT PANEL */
+        .auth-left {
+          width: 320px; flex-shrink: 0;
+          background: linear-gradient(170deg, #0e0e1a 0%, #080810 100%);
+          border-right: 1px solid rgba(255,255,255,0.06);
+          padding: 40px 32px;
+          display: flex; flex-direction: column;
+          position: relative; overflow: hidden;
+        }
+        .auth-left::before {
+          content: '';
+          position: absolute; top: -60px; right: -60px;
+          width: 220px; height: 220px; border-radius: 50%;
+          background: radial-gradient(circle, rgba(255,107,53,0.1) 0%, transparent 65%);
+          pointer-events: none;
+        }
+        .brand-icon { font-size: 36px; margin-bottom: 10px; display: block; filter: drop-shadow(0 0 12px rgba(255,107,53,0.4)); }
+        .brand-name { font-size: 24px; font-weight: 800; letter-spacing: -0.03em; color: #F5F0FF; line-height: 1.1; }
+        .brand-sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; color: #FF6B35; text-transform: uppercase; margin-top: 6px; }
+        .divider { height: 1px; background: linear-gradient(90deg, rgba(255,107,53,0.3), transparent); margin: 28px 0; }
+        .feature-list { display: flex; flex-direction: column; gap: 18px; flex: 1; }
+        .feature-item { display: flex; gap: 12px; align-items: flex-start; opacity: 0; transform: translateX(-10px); transition: opacity 0.4s ease, transform 0.4s ease; }
+        .feature-item.mounted { opacity: 1; transform: translateX(0); }
+        .feature-icon { width: 34px; height: 34px; border-radius: 8px; background: rgba(255,107,53,0.1); border: 1px solid rgba(255,107,53,0.15); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+        .feature-label { font-size: 12px; font-weight: 700; color: #E8E4FF; margin-bottom: 2px; }
+        .feature-sub { font-size: 10.5px; color: #5858A0; line-height: 1.4; }
+        .demo-hint { margin-top: 28px; padding: 10px 14px; background: rgba(255,107,53,0.06); border: 1px solid rgba(255,107,53,0.12); border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #5858A0; line-height: 1.7; }
+        .demo-hint span { color: #FF6B35; }
+
+        /* RIGHT PANEL */
+        .auth-right { flex: 1; background: #0a0a12; padding: 40px 40px; display: flex; flex-direction: column; justify-content: center; }
+        .panel-title { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; color: #F0F0FF; margin-bottom: 4px; }
+        .panel-sub { font-size: 12px; color: #5858A0; margin-bottom: 28px; }
+
+        .mode-toggle { display: flex; background: #0d0d18; border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; padding: 4px; margin-bottom: 24px; }
+        .mode-btn { flex: 1; padding: 9px 0; border: none; border-radius: 7px; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+        .mode-btn.active { background: linear-gradient(135deg, #FF6B35, #e85a24); color: #fff; box-shadow: 0 4px 16px rgba(255,107,53,0.3); }
+        .mode-btn.inactive { background: transparent; color: #5858A0; }
+
+        .role-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #5858A0; margin-bottom: 8px; }
+        .role-toggle { display: flex; gap: 8px; margin-bottom: 18px; }
+        .role-btn { flex: 1; padding: 12px 0; border-radius: 10px; border: 1px solid; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .role-btn.active { background: rgba(255,107,53,0.1); border-color: rgba(255,107,53,0.35); color: #FF6B35; }
+        .role-btn.inactive { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.07); color: #5858A0; }
+
+        .form-group { display: flex; flex-direction: column; gap: 10px; }
+        .auth-input { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; color: #F0F0FF; font-family: 'Sora', sans-serif; font-size: 13px; padding: 11px 14px; outline: none; transition: all 0.2s; box-sizing: border-box; }
+        .auth-input:focus { border-color: rgba(255,107,53,0.5); background: rgba(255,107,53,0.04); box-shadow: 0 0 0 3px rgba(255,107,53,0.08); }
+        .auth-input::placeholder { color: #3a3a60; }
+        .auth-input option { background: #0d0d18; color: #F0F0FF; }
+
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .auth-error { background: rgba(255,23,68,0.07); border: 1px solid rgba(255,23,68,0.2); border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #FF1744; display: flex; align-items: center; gap: 6px; }
+
+        .auth-submit { width: 100%; padding: 13px 0; border: none; border-radius: 10px; background: linear-gradient(135deg, #FF6B35 0%, #e8502a 100%); color: #fff; font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 20px rgba(255,107,53,0.35); margin-top: 4px; position: relative; overflow: hidden; }
+        .auth-submit::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%); }
+        .auth-submit:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(255,107,53,0.45); }
+        .auth-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 6px; vertical-align: middle; }
+
+        .section-sep { display: flex; align-items: center; gap: 10px; margin: 2px 0; }
+        .section-sep-line { flex: 1; height: 1px; background: rgba(255,255,255,0.06); }
+        .section-sep-text { font-size: 10px; color: #3a3a60; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+      `}</style>
+
+      <div className="auth-root">
+        <div className="auth-bg-dots" />
+
+        <div className={`auth-card ${mounted ? "mounted" : ""}`}>
+
+          {/* ── LEFT BRAND PANEL ── */}
+          <div className="auth-left">
+            <div>
+              <span className="brand-icon">🏪</span>
+              <div className="brand-name">Kirana<br />Connect</div>
+              <div className="brand-sub">Mandi Terminal · Rajasthan</div>
+            </div>
+
+            <div className="divider" />
+
+            <div className="feature-list">
+              {FEATURES.map(({ icon, label, sub }, i) => (
+                <div key={label} className={`feature-item ${mounted ? "mounted" : ""}`}
+                     style={{ transitionDelay: `${0.1 + i * 0.08}s` }}>
+                  <div className="feature-icon">{icon}</div>
+                  <div>
+                    <div className="feature-label">{label}</div>
+                    <div className="feature-sub">{sub}</div>
+                  </div>
                 </div>
-              </div>
-            </div>
-            <span className="badge badge-primary">
-              <span className="live-dot" style={{ background: 'var(--saffron)' }} />
-              Member 1
-            </span>
-          </div>
-
-          <div style={{ marginTop: 34, maxWidth: 470 }}>
-            <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3.2rem)', lineHeight: 1, fontWeight: 800, letterSpacing: '-.06em' }}>
-              Login for shop owners and wholesalers
-            </h1>
-            <p style={{ marginTop: 18, color: 'var(--text-secondary)', fontSize: 15, lineHeight: 1.8 }}>
-              Access your orders, products, stock updates, and daily business activity from one simple and secure place.
-            </p>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: 14, marginTop: 32 }}>
-            {FEATURE_CARDS.map((feature, index) => (
-              <div
-                key={feature.label}
-                className="card"
-                style={{
-                  padding: '18px 16px',
-                  background: index % 2 === 0 ? 'rgba(17,17,29,.9)' : 'rgba(11,11,20,.9)',
-                }}
-              >
-                <BadgeIcon tone={index % 2 === 0 ? 'saffron' : 'ice'}>{feature.icon}</BadgeIcon>
-                <div style={{ marginTop: 14, fontSize: 14, fontWeight: 700 }}>{feature.label}</div>
-                <div style={{ marginTop: 6, fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.65 }}>
-                  {feature.sub}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div
-            style={{
-              marginTop: 28,
-              padding: '18px 20px',
-              borderRadius: 18,
-              border: '1px solid rgba(255,107,53,.2)',
-              background: 'linear-gradient(180deg, rgba(255,107,53,.08), rgba(255,107,53,.02))',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-              flexWrap: 'wrap',
-            }}
-          >
-            <BadgeIcon tone="emerald">ON</BadgeIcon>
-            <div style={{ flex: 1, minWidth: 220 }}>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '.14em' }}>
-                Demo Credentials
-              </div>
-              <div style={{ marginTop: 6, fontWeight: 700 }}>Phone 9876543210</div>
-              <div style={{ marginTop: 3, color: 'var(--text-secondary)', fontSize: 13 }}>Password password123</div>
-            </div>
-          </div>
-        </section>
-
-        <section
-          style={{
-            flex: '1 1 420px',
-            minWidth: 320,
-            padding: '42px clamp(22px, 4vw, 38px)',
-            background: 'linear-gradient(180deg, rgba(17,17,29,.98), rgba(11,11,20,.98))',
-          }}
-        >
-          <div style={{ maxWidth: 430, margin: '0 auto' }}>
-            <div style={{ marginBottom: 22 }}>
-              <div style={{ fontSize: 12, color: 'var(--text-muted)', letterSpacing: '.16em', textTransform: 'uppercase' }}>
-                Access Portal
-              </div>
-              <h2 style={{ marginTop: 10, fontSize: 28, fontWeight: 800, letterSpacing: '-.04em' }}>
-                {mode === 'login' ? 'Sign in to continue' : 'Register a new account'}
-              </h2>
-              <p style={{ marginTop: 8, color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.7 }}>
-                {mode === 'login'
-                  ? 'Use your registered phone number and password to restore your secure session.'
-                  : 'Choose a business role and create a dual-role account for the platform.'}
-              </p>
+              ))}
             </div>
 
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: 6,
-                padding: 5,
-                borderRadius: 16,
-                border: '1px solid rgba(33,33,58,.9)',
-                background: 'rgba(6,6,12,.44)',
-                marginBottom: 24,
-              }}
-            >
-              {['login', 'register'].map((nextMode) => {
-                const active = mode === nextMode;
+            <div className="demo-hint">
+              <div>📱 Demo ShopOwner</div>
+              <div><span>9876543211</span> / password123</div>
+              <div style={{ marginTop: 6 }}>🏭 Demo Wholesaler</div>
+              <div><span>9876543210</span> / password123</div>
+            </div>
+          </div>
 
-                return (
-                  <button
-                    key={nextMode}
-                    className="btn"
-                    onClick={() => {
-                      setMode(nextMode);
-                      setError('');
-                      setAuthError('');
-                    }}
-                    style={{
-                      minHeight: 48,
-                      borderRadius: 12,
-                      justifyContent: 'flex-start',
-                      padding: '0 14px',
-                      background: active ? 'linear-gradient(180deg, rgba(255,107,53,.18), rgba(255,107,53,.08))' : 'transparent',
-                      border: active ? '1px solid rgba(255,107,53,.26)' : '1px solid transparent',
-                      color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
-                    }}
-                  >
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}>{nextMode === 'login' ? 'IN' : 'UP'}</span>
-                    {nextMode === 'login' ? 'Sign In' : 'Register'}
-                  </button>
-                );
-              })}
+          {/* ── RIGHT FORM PANEL ── */}
+          <div className="auth-right">
+            <div className="panel-title">
+              {mode === "login" ? "Welcome back" : "Join the Mandi"}
+            </div>
+            <div className="panel-sub">
+              {mode === "login"
+                ? "Sign in to your KiranaConnect account"
+                : "Create your account and start ordering wholesale"}
             </div>
 
-            {mode === 'register' && (
-              <div style={{ display: 'grid', gap: 10, marginBottom: 18 }}>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '.1em' }}>
-                  Select Role
-                </div>
-                {ROLE_OPTIONS.map(({ value, label, icon, blurb }) => {
-                  const active = role === value;
+            <div className="mode-toggle">
+              {["login", "register"].map(m => (
+                <button key={m} className={`mode-btn ${mode === m ? "active" : "inactive"}`}
+                        onClick={() => { setMode(m); setError(""); }}>
+                  {m === "login" ? "🔑  Sign In" : "📝  Register"}
+                </button>
+              ))}
+            </div>
 
-                  return (
-                    <button
-                      key={value}
-                      className="btn"
-                      onClick={() => setRole(value)}
-                      style={{
-                        width: '100%',
-                        minHeight: 76,
-                        borderRadius: 16,
-                        padding: '14px 16px',
-                        justifyContent: 'space-between',
-                        background: active ? 'linear-gradient(180deg, rgba(255,107,53,.12), rgba(255,107,53,.05))' : 'rgba(6,6,12,.26)',
-                        border: `1px solid ${active ? 'rgba(255,107,53,.28)' : 'rgba(33,33,58,.95)'}`,
-                        color: 'var(--text-primary)',
-                        textAlign: 'left',
-                      }}
-                    >
-                      <span style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <BadgeIcon tone={active ? 'saffron' : 'ice'}>{icon}</BadgeIcon>
-                        <span style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                          <span style={{ fontWeight: 700, fontSize: 14 }}>{label}</span>
-                          <span style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{blurb}</span>
-                        </span>
-                      </span>
-                      <span
-                        style={{
-                          width: 18,
-                          height: 18,
-                          borderRadius: '50%',
-                          border: `1px solid ${active ? 'var(--saffron)' : 'var(--border-hi)'}`,
-                          background: active ? 'var(--saffron)' : 'transparent',
-                          boxShadow: active ? '0 0 0 4px rgba(255,107,53,.12)' : 'none',
-                          flexShrink: 0,
-                        }}
-                      />
+            {mode === "register" && (
+              <>
+                <div className="role-label">I am a —</div>
+                <div className="role-toggle">
+                  {[{ val: "shopOwner", emoji: "🏪", label: "Shop Owner" },
+                    { val: "wholesaler", emoji: "🏭", label: "Wholesaler" }].map(({ val, emoji, label }) => (
+                    <button key={val} className={`role-btn ${role === val ? "active" : "inactive"}`}
+                            onClick={() => setRole(val)}>
+                      {emoji} {label}
                     </button>
-                  );
-                })}
-              </div>
+                  ))}
+                </div>
+              </>
             )}
 
-            <div style={{ display: 'grid', gap: 12 }}>
-              {mode === 'register' && (
+            <div className="form-group">
+              {mode === "register" && (
                 <>
-                  <InputShell icon="NM">
-                    <input
-                      className="input"
-                      placeholder="Full name"
-                      value={form.name}
-                      onChange={(e) => set('name', e.target.value)}
-                      onBlur={() => setTouched((current) => ({ ...current, name: true }))}
-                    />
-                  </InputShell>
-                  {touched.name && validationErrors.name && (
-                    <div style={{ marginTop: -4, paddingLeft: 6, fontSize: 12, color: '#ff7a92' }}>{validationErrors.name}</div>
+                  <div className="two-col">
+                    <input className="auth-input" placeholder="Full name"
+                           value={form.name} onChange={e => set("name", e.target.value)} />
+                    <input className="auth-input" placeholder="Shop / Business name"
+                           value={form.shopName} onChange={e => set("shopName", e.target.value)} />
+                  </div>
+
+                  <select className="auth-input" value={form.district}
+                          onChange={e => set("district", e.target.value)}>
+                    {DISTRICTS.map(d => <option key={d} value={d}>{d}</option>)}
+                  </select>
+
+                  {role === "wholesaler" && (
+                    <input className="auth-input" placeholder="GST Number (optional)"
+                           value={form.gstNumber} onChange={e => set("gstNumber", e.target.value)} />
                   )}
 
-                  <InputShell icon="SH">
-                    <input
-                      className="input"
-                      placeholder="Shop / Business name"
-                      value={form.shopName}
-                      onChange={(e) => set('shopName', e.target.value)}
-                      onBlur={() => setTouched((current) => ({ ...current, shopName: true }))}
-                    />
-                  </InputShell>
-                  {touched.shopName && validationErrors.shopName && (
-                    <div style={{ marginTop: -4, paddingLeft: 6, fontSize: 12, color: '#ff7a92' }}>{validationErrors.shopName}</div>
-                  )}
-
-                  <InputShell icon="DT">
-                    <select
-                      className="input"
-                      value={form.district}
-                      onChange={(e) => set('district', e.target.value)}
-                      onBlur={() => setTouched((current) => ({ ...current, district: true }))}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {DISTRICTS.map((district) => (
-                        <option key={district} value={district}>
-                          {district}
-                        </option>
-                      ))}
-                    </select>
-                  </InputShell>
-
-                  {role === 'wholesaler' && (
-                    <InputShell icon="GST">
-                      <input
-                        className="input"
-                        placeholder="GST Number (optional)"
-                        value={form.gstNumber}
-                        onChange={(e) => set('gstNumber', e.target.value.toUpperCase().slice(0, 15))}
-                        onBlur={() => setTouched((current) => ({ ...current, gstNumber: true }))}
-                      />
-                    </InputShell>
-                  )}
-                  {touched.gstNumber && validationErrors.gstNumber && (
-                    <div style={{ marginTop: -4, paddingLeft: 6, fontSize: 12, color: '#ff7a92' }}>{validationErrors.gstNumber}</div>
-                  )}
+                  <div className="section-sep">
+                    <div className="section-sep-line" />
+                    <span className="section-sep-text">credentials</span>
+                    <div className="section-sep-line" />
+                  </div>
                 </>
               )}
 
-              <InputShell icon="PH">
-                <input
-                  className="input"
-                  placeholder="Phone number"
-                  value={form.phone}
-                  onChange={(e) => set('phone', normalizePhone(e.target.value))}
-                  onBlur={() => setTouched((current) => ({ ...current, phone: true }))}
-                />
-              </InputShell>
-              {touched.phone && validationErrors.phone && (
-                <div style={{ marginTop: -4, paddingLeft: 6, fontSize: 12, color: '#ff7a92' }}>{validationErrors.phone}</div>
-              )}
+              <input className="auth-input" placeholder="📱  Phone number"
+                     value={form.phone} onChange={e => set("phone", e.target.value)} />
 
-              <InputShell icon="PW">
-                <input
-                  className="input"
-                  type="password"
-                  placeholder="Password"
-                  value={form.password}
-                  onChange={(e) => set('password', e.target.value)}
-                  onBlur={() => setTouched((current) => ({ ...current, password: true }))}
-                  onKeyDown={(e) => e.key === 'Enter' && submit()}
-                />
-              </InputShell>
-              {touched.password && validationErrors.password && (
-                <div style={{ marginTop: -4, paddingLeft: 6, fontSize: 12, color: '#ff7a92' }}>{validationErrors.password}</div>
-              )}
+              <input className="auth-input" type="password" placeholder="🔒  Password"
+                     value={form.password} onChange={e => set("password", e.target.value)}
+                     onKeyDown={e => e.key === "Enter" && submit()} />
 
-              {(authError || error) && (
-                <div
-                  style={{
-                    padding: '13px 14px',
-                    borderRadius: 16,
-                    border: '1px solid rgba(255,23,68,.24)',
-                    background: 'linear-gradient(180deg, rgba(255,23,68,.12), rgba(255,23,68,.05))',
-                    color: '#ff7a92',
-                    fontSize: 13,
-                    lineHeight: 1.6,
-                  }}
-                >
-                  <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, marginRight: 8 }}>ERR</span>
-                  {error || authError}
+              {error && (
+                <div className="auth-error">
+                  <span>⚠</span> {error}
                 </div>
               )}
 
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  gap: 12,
-                  padding: '0 4px',
-                  color: 'var(--text-muted)',
-                  fontSize: 12,
-                }}
-              >
-                <span>{mode === 'login' ? 'Use your registered number to restore access.' : 'Passwords need 8+ characters.'}</span>
-                <span style={{ fontFamily: 'var(--font-mono)' }}>
-                  {mode === 'register' ? `${role === 'wholesaler' ? 'WH' : 'SO'} MODE` : 'AUTH READY'}
-                </span>
-              </div>
-
-              <button
-                className="btn btn-primary"
-                onClick={submit}
-                disabled={loading || !formIsValid}
-                style={{
-                  minHeight: 54,
-                  borderRadius: 16,
-                  justifyContent: 'space-between',
-                  padding: '0 16px',
-                  marginTop: 4,
-                }}
-              >
-                <span>{loading ? 'Authenticating...' : mode === 'login' ? 'Enter Secure Portal' : 'Create Account'}</span>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{loading ? '...' : '->'}</span>
+              <button className="auth-submit" onClick={submit} disabled={loading}>
+                {loading
+                  ? <><span className="spinner" />Please wait...</>
+                  : mode === "login" ? "Enter Mandi Terminal →" : "Create Account →"}
               </button>
             </div>
           </div>
-        </section>
+
+        </div>
       </div>
-    </div>
+    </>
   );
 }
