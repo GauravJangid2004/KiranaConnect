@@ -1,0 +1,72 @@
+# ── Dependencies ──────────────────────────────────────────
+node_modules/
+server/node_modules/
+client/node_modules/
+.pnp
+.pnp.js
+package-lock.json
+yarn.lock
+
+# ── Environment variables (NEVER commit secrets) ──────────
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+server/.env
+client/.env
+
+# ── Build outputs ─────────────────────────────────────────
+dist/
+build/
+client/dist/
+server/dist/
+
+# ── Vite cache ────────────────────────────────────────────
+client/.vite/
+.vite/
+
+# ── Logs ──────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+server/logs/
+
+# ── OS files ──────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ── Editor / IDE ──────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+*.swo
+
+# ── Runtime / temp ────────────────────────────────────────
+.cache/
+coverage/
+*.tgz
+*.pid
+*.seed
+*.pid.lock
+tmp/
+temp/
+
+# ── Stray shell-expansion artifacts ───────────────────────
+{config,models,middleware,routes}
+server/{config,models,middleware,routes}
+client/{contexts,services,components}
