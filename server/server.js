@@ -39,5 +39,6 @@ mongoose
   })
   .catch((error) => {
     console.error('MongoDB connection failed:', error.message);
+    console.error('Please ensure your IP is whitelisted in the MongoDB Atlas dashboard.');
     process.exit(1);
   });
