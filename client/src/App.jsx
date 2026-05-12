@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import AuthPage from './components/AuthPage';
 import Topbar from './components/Topbar';
+import LandingPage from './pages/LandingPage';
 
 const SHOP_OWNER_TABS = ['catalogue', 'cart', 'myorders'];
 const WHOLESALER_TABS = ['wh-orders', 'wh-batches', 'wh-products'];
@@ -121,10 +123,79 @@ function Dashboard() {
   );
 }
 
+function LoadingScreen() {
+  return (
+    <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: 24 }}>
+      <div style={{ textAlign: 'center', padding: 28, borderRadius: 24, border: '1px solid rgba(52,69,99,.42)', background: 'linear-gradient(180deg, rgba(18,24,38,.94), rgba(12,16,26,.98))', boxShadow: '0 24px 52px rgba(0,0,0,.22)' }}>
+        <div style={{ fontSize: 48, fontWeight: 800, letterSpacing: '-.05em' }}>KC</div>
+        <div style={{ marginTop: 12, fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--text-secondary)' }}>
+          Restoring session...
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProtectedRoute({ children }) {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
+  return user ? children : <Navigate to="/login" replace />;
+}
+
+function PublicRoute({ children }) {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
+  return user ? <Navigate to="/app" replace /> : children;
+}
+
+function AppRoutes() {
+  const navigate = useNavigate();
+
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <PublicRoute>
+            <LandingPage onGetStarted={() => navigate('/login')} onLogin={() => navigate('/login')} />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/login"
+        element={
+          <PublicRoute>
+            <AuthPage />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/app"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
+
 export default function App() {
   return (
     <AuthProvider>
-      <Dashboard />
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
     </AuthProvider>
   );
 }

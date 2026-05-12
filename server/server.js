@@ -10,6 +10,12 @@ import dns from 'dns';
 dns.setDefaultResultOrder('ipv4first');
 
 const app = express();
+const isProduction = process.env.NODE_ENV === 'production';
+
+if (!process.env.JWT_SECRET && !isProduction) {
+  process.env.JWT_SECRET = 'kiranaconnect-local-dev-secret';
+  console.warn('JWT_SECRET not set. Using a local development fallback.');
+}
 
 app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173' }));
 app.use(express.json());
@@ -34,19 +40,50 @@ app.get('/api/wholesaler/dashboard', authenticate, requireRole('wholesaler'), (r
   });
 });
 
-mongoose
-  .connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/kiranaconnect_auth', {
-    serverSelectionTimeoutMS: 30000,
-    connectTimeoutMS: 30000,
-    socketTimeoutMS: 45000,
-  })
-  .then(() => {
-    console.log('✓ MongoDB connected successfully');
-    app.listen(process.env.PORT || 5000, () => {
-      console.log(`Auth server running on http://localhost:${process.env.PORT || 5000}`);
-    });
-  })
-  .catch((error) => {
-    console.error('MongoDB connection failed:', error.message);
+const PORT = process.env.PORT || 5000;
+
+function startServer() {
+  const server = app.listen(PORT, () => {
+    console.log(`Auth server running on http://localhost:${PORT}`);
+    console.log(`Auth store: ${process.env.AUTH_STORE === 'memory' ? 'memory fallback' : 'MongoDB'}`);
+  });
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`Port ${PORT} is already in use. Stop the other server or set PORT to a free port.`);
+      process.exit(1);
+    }
+    console.error('Server error:', err);
     process.exit(1);
   });
+}
+
+async function bootstrap() {
+  if (process.env.AUTH_STORE === 'memory') {
+    console.warn('AUTH_STORE=memory. Running without MongoDB persistence.');
+    startServer();
+    return;
+  }
+
+  try {
+    await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/kiranaconnect_auth', {
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 5000,
+      socketTimeoutMS: 30000,
+    });
+    console.log('MongoDB connected successfully');
+    startServer();
+  } catch (error) {
+    console.error('MongoDB connection failed:', error.message);
+    if (isProduction) {
+      console.error('Set MONGO_URI to a reachable MongoDB instance before starting production.');
+      process.exit(1);
+    }
+
+    process.env.AUTH_STORE = 'memory';
+    console.warn('Falling back to in-memory auth store for local development.');
+    startServer();
+  }
+}
+
+bootstrap();
