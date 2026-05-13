@@ -110,57 +110,74 @@ export default function Topbar({ activeTab, setActiveTab }) {
   }, [activeTab, setActiveTab, tabs]);
 
   return (
-    <header style={{
-      position: 'sticky', top: 0, zIndex: 100,
-      borderBottom: '1px solid rgba(52,69,99,.46)',
-      background: 'rgba(8,12,20,.82)',
-      backdropFilter: 'blur(20px)',
-      boxShadow: '0 10px 30px rgba(0,0,0,.16)',
-    }}>
-      <div style={{ maxWidth: 1180, margin: '0 auto', padding: '18px 18px 16px', display: 'grid', gap: 16 }}>
-
+    <header className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 py-4">
         {/* Top row — brand + meta */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <BrandMark />
+        <div className="flex items-center justify-between gap-4 flex-wrap mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+              KC
+            </div>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                <span style={{ fontSize: 20, fontWeight: 800, letterSpacing: '-.03em' }}>KiranaConnect</span>
-                <span className={`badge ${isWholesaler ? 'badge-violet' : 'badge-info'}`}>
+              <div className="flex items-center gap-3 flex-wrap">
+                <span className="text-xl font-black text-gray-900">KiranaConnect</span>
+                <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                  isWholesaler ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'
+                }`}>
                   {isWholesaler ? 'Wholesaler Access' : 'ShopOwner Access'}
                 </span>
               </div>
-              <div style={{ marginTop: 6, fontSize: 13, color: 'var(--text-secondary)' }}>
+              <div className="text-sm text-gray-600 mt-1">
                 Role-based navigation with secure session control
               </div>
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-            <MetaChip label="Workspace" value={isWholesaler ? 'Wholesale Desk' : 'Retail Desk'} tone="saffron" />
-            <MetaChip label="Shop"      value={user?.shopName || 'Active account'} />
-            <MetaChip label="Live Time" value={time.toLocaleTimeString('en-IN', { hour12: false })} tone="ice" />
-            <button className="btn btn-ghost" onClick={logout}
-              style={{ minHeight: 48, padding: '0 16px', borderRadius: 14, display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}>OUT</span>
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="bg-gray-50 px-4 py-2 rounded-lg border border-gray-200">
+              <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Workspace</div>
+              <div className="text-sm font-semibold text-gray-900">{isWholesaler ? 'Wholesale Desk' : 'Retail Desk'}</div>
+            </div>
+            <div className="bg-gray-50 px-4 py-2 rounded-lg border border-gray-200">
+              <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Shop</div>
+              <div className="text-sm font-semibold text-gray-900">{user?.shopName || 'Active account'}</div>
+            </div>
+            <div className="bg-gray-50 px-4 py-2 rounded-lg border border-gray-200">
+              <div className="text-xs font-bold text-gray-500 uppercase tracking-wide">Live Time</div>
+              <div className="text-sm font-semibold font-mono text-gray-900">{time.toLocaleTimeString('en-IN', { hour12: false })}</div>
+            </div>
+            <button className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors" onClick={logout}>
               Logout
             </button>
           </div>
         </div>
 
         {/* Nav tabs */}
-        <nav style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 12 }}>
+        <nav className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {tabs.map(tab => (
-            <TabButton
+            <button
               key={tab.id}
-              tab={tab}
-              active={activeTab === tab.id}
               onClick={() => setActiveTab(tab.id)}
-              badge={tab.id === 'cart' ? totals?.itemCount : 0}
-            />
+              className={`p-4 rounded-lg border transition-all ${
+                activeTab === tab.id
+                  ? 'bg-orange-50 border-orange-200 text-orange-900'
+                  : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded flex items-center justify-center text-xs font-bold ${
+                  activeTab === tab.id ? 'bg-orange-100 text-orange-600' : 'bg-gray-100 text-gray-600'
+                }`}>
+                  {tab.icon}
+                </div>
+                <div className="text-left">
+                  <div className="font-semibold text-sm">{tab.label}</div>
+                  <div className="text-xs text-gray-500">{tab.hint}</div>
+                </div>
+              </div>
+            </button>
           ))}
         </nav>
-
       </div>
     </header>
   );

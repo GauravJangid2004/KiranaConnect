@@ -48,10 +48,10 @@ function Dashboard() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: 24 }}>
-        <div style={{ textAlign: 'center', padding: 28, borderRadius: 24, border: '1px solid rgba(52,69,99,.42)', background: 'linear-gradient(180deg, rgba(18,24,38,.94), rgba(12,16,26,.98))', boxShadow: '0 24px 52px rgba(0,0,0,.22)' }}>
-          <div style={{ fontSize: 48, fontWeight: 800, letterSpacing: '-.05em' }}>KC</div>
-          <div style={{ marginTop: 12, fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--text-secondary)' }}>
+      <div className="min-h-screen flex items-center justify-center p-6 bg-gray-50">
+        <div className="bg-white p-8 rounded-xl shadow-lg text-center border border-gray-200">
+          <div className="text-5xl font-black mb-3 text-orange-500">KC</div>
+          <div className="text-sm font-mono text-gray-600">
             Restoring session...
           </div>
         </div>
@@ -66,57 +66,103 @@ function Dashboard() {
   const isWholesaler = user.role === 'wholesaler';
 
   return (
-    <div style={{ minHeight: '100vh', background: 'transparent' }}>
+    <div className="min-h-screen bg-gray-50">
       <Topbar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <main style={{ maxWidth: 1120, margin: '0 auto', padding: '34px 18px 56px' }}>
-        <div style={{ display: 'grid', gap: 18 }}>
-          <section
-            className="card animate-in"
-            style={{
-              padding: '28px 28px 30px',
-              background: 'linear-gradient(135deg, rgba(255,107,53,.12), rgba(84,213,255,.06) 48%, rgba(18,24,38,.96) 100%)',
-              borderColor: 'rgba(52,69,99,.56)',
-            }}
-          >
-            <span className={`badge ${isWholesaler ? 'badge-violet' : 'badge-primary'}`}>
+      <main className="max-w-7xl mx-auto px-4 py-8">
+        <div className="grid gap-6">
+          {/* Welcome Section */}
+          <section className="bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${
+              isWholesaler 
+                ? 'bg-green-100 text-green-800' 
+                : 'bg-orange-100 text-orange-800'
+            }`}>
               {isWholesaler ? 'Wholesale Session' : 'Retail Session'}
             </span>
-            <h1 style={{ marginTop: 18, fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 800, letterSpacing: '-.05em', lineHeight: 1.02 }}>
+            <h1 className="mt-4 text-3xl md:text-4xl font-black leading-tight text-gray-900">
               Secure dual-role access for KiranaConnect
             </h1>
-            <p style={{ marginTop: 16, maxWidth: 760, color: 'var(--text-secondary)', fontSize: 17, lineHeight: 1.8 }}>
+            <p className="mt-4 max-w-3xl text-gray-600 leading-relaxed">
               This Member 1 module handles credential verification, JWT-based session continuity, and strict role isolation so shop owners and wholesalers only reach the routes meant for them.
             </p>
-            <div style={{ marginTop: 22, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              <span className="badge badge-success">bcrypt Password Hashing</span>
-              <span className="badge badge-info">Role Claims in JWT</span>
-              <span className="badge badge-primary">Persistent AuthContext</span>
+            <div className="mt-6 flex flex-wrap gap-2">
+              <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">bcrypt Password Hashing</span>
+              <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-semibold">Role Claims in JWT</span>
+              <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">Persistent AuthContext</span>
             </div>
           </section>
 
-          <DashboardPanel
-            title={`Authenticated as ${isWholesaler ? 'Wholesaler' : 'Shop Owner'}`}
-            body={`This branch isolates Member 1 work: dual-role login, JWT session persistence, Axios auth headers, and role-based navigation control. Logged in user: ${user.shopName}.`}
-            tone={isWholesaler ? 'ice' : 'saffron'}
-          />
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
-            <DashboardPanel
-              title="bcrypt + User Schema"
-              body="Passwords are hashed before save, phone numbers are normalized, and the password field is hidden by default from normal queries."
-              tone="emerald"
-            />
-            <DashboardPanel
-              title="JWT + Role Guards"
-              body="Tokens are signed with userId, role, and shopName. Protected backend routes reject the wrong role even if someone manually edits the frontend."
-              tone="ice"
-            />
-            <DashboardPanel
-              title="AuthContext + Axios"
-              body="The client restores the stored token after refresh and re-attaches it to requests automatically so the login session persists."
-              tone="saffron"
-            />
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+              <div className="text-3xl font-black text-orange-500 mb-1">₹4.2L</div>
+              <div className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Total Orders</div>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+              <div className="text-3xl font-black text-orange-500 mb-1">₹2.8L</div>
+              <div className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Revenue</div>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+              <div className="text-3xl font-black text-orange-500 mb-1">156</div>
+              <div className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Active Orders</div>
+            </div>
           </div>
+
+          {/* User Info Panel */}
+          <section className="bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+            <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">Authenticated</span>
+            <h2 className="mt-4 text-2xl font-bold text-gray-900">
+              Welcome, {user.shopName}
+            </h2>
+            <p className="mt-2 text-gray-600">
+              Role: {isWholesaler ? 'Wholesaler' : 'Shop Owner'} • Member 1 Access
+            </p>
+            <div className="mt-4 flex gap-3">
+              <button className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors">View Dashboard</button>
+              <button className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors">Manage Orders</button>
+            </div>
+          </section>
+
+          {/* Orders Table */}
+          <section className="bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+            <h3 className="text-xl font-bold mb-4 text-gray-900">Recent Orders</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Order ID</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Customer</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Amount</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-gray-100">
+                    <td className="py-3 px-4 text-gray-900">#KC-001</td>
+                    <td className="py-3 px-4 text-gray-900">Ram Kirana Store</td>
+                    <td className="py-3 px-4"><span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold">Dispatched</span></td>
+                    <td className="py-3 px-4 text-gray-900">₹12,500</td>
+                    <td className="py-3 px-4 text-gray-900">2024-01-15</td>
+                  </tr>
+                  <tr className="border-b border-gray-100">
+                    <td className="py-3 px-4 text-gray-900">#KC-002</td>
+                    <td className="py-3 px-4 text-gray-900">Sharma Grocery</td>
+                    <td className="py-3 px-4"><span className="bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs font-semibold">Pending</span></td>
+                    <td className="py-3 px-4 text-gray-900">₹8,750</td>
+                    <td className="py-3 px-4 text-gray-900">2024-01-14</td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 px-4 text-gray-900">#KC-003</td>
+                    <td className="py-3 px-4 text-gray-900">Patel Mart</td>
+                    <td className="py-3 px-4"><span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold">Cancelled</span></td>
+                    <td className="py-3 px-4 text-gray-900">₹15,200</td>
+                    <td className="py-3 px-4 text-gray-900">2024-01-13</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
         </div>
       </main>
     </div>
@@ -125,10 +171,10 @@ function Dashboard() {
 
 function LoadingScreen() {
   return (
-    <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: 24 }}>
-      <div style={{ textAlign: 'center', padding: 28, borderRadius: 24, border: '1px solid rgba(52,69,99,.42)', background: 'linear-gradient(180deg, rgba(18,24,38,.94), rgba(12,16,26,.98))', boxShadow: '0 24px 52px rgba(0,0,0,.22)' }}>
-        <div style={{ fontSize: 48, fontWeight: 800, letterSpacing: '-.05em' }}>KC</div>
-        <div style={{ marginTop: 12, fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--text-secondary)' }}>
+    <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="text-center p-7 rounded-3xl border border-gray-300 bg-linear-to-b from-gray-900 to-gray-800 shadow-2xl">
+        <div className="text-5xl font-black tracking-tight text-white">KC</div>
+        <div className="mt-3 font-mono text-sm text-gray-400">
           Restoring session...
         </div>
       </div>

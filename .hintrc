@@ -1,0 +1,15 @@
+{
+  "extends": [
+    "development"
+  ],
+  "hints": {
+    "compat-api/css": [
+      "default",
+      {
+        "ignore": [
+          "border: 1px solid color-mix(in srgb, var(--step-accent) 34%, rgba(255, 255, 255, 0.12))"
+        ]
+      }
+    ]
+  }
+}
