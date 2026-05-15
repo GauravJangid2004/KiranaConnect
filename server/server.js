@@ -1,31 +1,41 @@
+/**
+ * SERVER — Member 2 (Redis Cache + Product Catalogue)
+ * Simplified server with only auth + product routes.
+ * No socket.io, no node-cron (those belong to Member 4).
+ */
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import { connectRedis } from './config/redis.js';
+
+import './config/redis.js'; // Connect Redis on startup
+
+import authRoutes from './routes/auth.js';
 import productRoutes from './routes/products.js';
 
-dotenv.config();
-
 const app = express();
-app.use(cors());
+
+app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }));
 app.use(express.json());
 
+// API Routes
+app.use('/api/auth',     authRoutes);
 app.use('/api/products', productRoutes);
 
-const PORT = process.env.PORT || 5000;
+app.get('/api/health', (_, res) =>
+  res.json({ status: 'ok', time: new Date(), service: 'KiranaConnect — Member 2 Server' })
+);
 
-async function start() {
-  await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/kiranaconnect');
-  console.log('[MongoDB] connected');
-
-  await connectRedis();
-  console.log('[Redis] connected');
-
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-}
-
-start().catch((err) => {
-  console.error('Startup failed:', err.message);
-  process.exit(1);
-});
+// ─── STARTUP ──────────────────────────────────────────────────────────────────
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log('✅ MongoDB connected');
+    app.listen(process.env.PORT || 5000, () => {
+      console.log(`🚀 KiranaConnect Server → http://localhost:${process.env.PORT || 5000}`);
+    });
+  })
+  .catch((err) => {
+    console.error('❌ MongoDB connection failed:', err.message);
+    process.exit(1);
+  });
